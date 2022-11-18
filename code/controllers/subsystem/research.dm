@@ -53,6 +53,7 @@ SUBSYSTEM_DEF(research)
 	//[88nodes * 5000points/node] / [1.5hr * 90min/hr * 60s/min]
 	//Around 450000 points max???
 
+
 	/// Lookup list for ordnance briefers.
 	var/list/ordnance_experiments
 	/// Lookup list for scipaper partners.
