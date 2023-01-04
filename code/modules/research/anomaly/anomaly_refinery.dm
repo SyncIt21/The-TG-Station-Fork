@@ -53,19 +53,15 @@
 /obj/machinery/research/anomaly_refinery/assume_air(datum/gas_mixture/giver)
 	return null // Required to make the TTV not vent directly into the air.
 
-/**
- * Determines how much explosive power (last value, so light impact theoretical radius) is required to make a certain anomaly type.
- *
- * Returns null if the max amount has already been reached.
- *
- */
-/obj/machinery/research/anomaly_refinery/proc/get_required_radius()
-	var/radius=MAX_RADIUS_REQUIRED
 
-	var/rating=0
+//Determines how much explosive power (last value, so light impact theoretical radius) is required to make a certain anomaly type.
+/obj/machinery/research/anomaly_refinery/proc/get_required_radius()
+	var/radius = MAX_RADIUS_REQUIRED
+
+	var/rating = 0
 	for(var/datum/stock_part/scanning_module/module in component_parts)
-		rating+=module.tier
-	radius-=3*rating
+		rating += module.tier
+	radius -= 3*rating
 
 	return radius
 
