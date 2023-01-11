@@ -196,8 +196,8 @@
 
 ///first time construction initialize implosions left
 /obj/machinery/research/anomaly_refinery/on_construction()
-	for(var/obj/item/stock_parts/manipulator/part in component_parts)
-		implosions_left=part.rating+1
+	for(var/datum/stock_part/manipulator/part in component_parts)
+		implosions_left = part.tier + 1
 		break
 
 /**
