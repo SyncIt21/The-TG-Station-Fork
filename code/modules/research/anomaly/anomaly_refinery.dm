@@ -227,13 +227,12 @@
 	///implosions decrease with every successfull & unsuccessfull use
 	implosions_left--
 	///delete the manupulator so the user cannot remove & put it back. This simulates the manipulator getting used up every explosion
-	var/obj/item/stock_parts/manipulator/thePart=null
-	for(var/obj/item/stock_parts/manipulator/part in component_parts)
+	var/datum/stock_part/manipulator/thePart=null
+	for(var/datum/stock_part/manipulator/part in component_parts)
 		thePart=part
 		break
 	if(thePart)
 		component_parts-=thePart
-		qdel(thePart)
 
 	if(explosion_range < required_range)
 		test_status = "Resultant detonation failed to produce enough implosive power to compress [inserted_core]. Items ejected."
