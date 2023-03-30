@@ -370,3 +370,5 @@
 	return data
 
 #undef MAX_RADIUS_REQUIRED
+#undef MIN_RADIUS_REQUIRED
+#undef COMPRESSION_TEST_TIME
