@@ -37,7 +37,7 @@
 	/// Here for the UI, tracks the amounts of reaction that has occured. 1 means valve opened but not reacted.
 	var/reaction_increment = 0
 
-	///number of ttv explosion tests before the manipulator gets fired & needs to be replaced
+	///number of ttv explosion tests before the servo gets fired & needs to be replaced
 	var/implosions_left=2
 
 /obj/machinery/research/anomaly_refinery/Initialize(mapload)
@@ -129,9 +129,9 @@
  * Starts a compression test.
  */
 /obj/machinery/research/anomaly_refinery/proc/start_test()
-	///manipulator got used up so reinstall new components
-	if(implosions_left==0)
-		say("ERROR: Manipulator is Fried,please install new manipulator")
+	///servo got used up so reinstall new components
+	if(implosions_left == 0)
+		say("ERROR: Servo is Fried, please install new servo")
 		return
 
 	if (active)
@@ -196,7 +196,7 @@
 
 ///first time construction initialize implosions left
 /obj/machinery/research/anomaly_refinery/on_construction()
-	for(var/datum/stock_part/manipulator/part in component_parts)
+	for(var/datum/stock_part/servo/part in component_parts)
 		implosions_left = part.tier + 1
 		break
 
@@ -226,9 +226,9 @@
 
 	///implosions decrease with every successfull & unsuccessfull use
 	implosions_left--
-	///delete the manupulator so the user cannot remove & put it back. This simulates the manipulator getting used up every explosion
-	var/datum/stock_part/manipulator/thePart=null
-	for(var/datum/stock_part/manipulator/part in component_parts)
+	///delete the manupulator so the user cannot remove & put it back. This simulates the servo getting used up every explosion
+	var/datum/stock_part/servo/thePart=null
+	for(var/datum/stock_part/servo/part in component_parts)
 		thePart=part
 		break
 	if(thePart)
@@ -370,5 +370,4 @@
 	return data
 
 #undef MAX_RADIUS_REQUIRED
-#undef MIN_RADIUS_REQUIRED
 #undef COMPRESSION_TEST_TIME
