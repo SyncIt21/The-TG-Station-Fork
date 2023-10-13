@@ -426,7 +426,7 @@
 /turf/open/floor/iron/white,
 /area/awaymission/cabin)
 "bF" = (
-/obj/machinery/atmospherics/components/unary/cryo_cell,
+/obj/machinery/cryo_cell,
 /turf/open/floor/iron/white,
 /area/awaymission/cabin)
 "bG" = (
@@ -2594,7 +2594,7 @@
 	},
 /area/awaymission/cabin/caves/sovietcave)
 "nM" = (
-/obj/machinery/door/airlock/multi_tile/glass{
+/obj/machinery/door/airlock/multi_tile/public/glass{
 	name = "Medical Bay"
 	},
 /obj/structure/cable,

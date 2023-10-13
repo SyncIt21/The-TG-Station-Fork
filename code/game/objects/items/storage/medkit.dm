@@ -34,6 +34,7 @@
 		/obj/item/reagent_containers/medigel,
 		/obj/item/reagent_containers/spray,
 		/obj/item/lighter,
+		/obj/item/storage/box/bandages,
 		/obj/item/storage/fancy/cigarettes,
 		/obj/item/storage/pill_bottle,
 		/obj/item/stack/medical,
@@ -288,18 +289,19 @@
 	if(empty)
 		return
 	var/static/list/items_inside = list(
+		/obj/item/cautery = 1,
+		/obj/item/scalpel = 1,
+		/obj/item/healthanalyzer/advanced = 1,
+		/obj/item/hemostat = 1,
+		/obj/item/reagent_containers/medigel/sterilizine = 1,
+		/obj/item/storage/box/bandages = 1,
+		/obj/item/surgical_drapes = 1,
+		/obj/item/reagent_containers/hypospray/medipen/atropine = 2,
+		/obj/item/stack/medical/gauze = 2,
 		/obj/item/stack/medical/suture/medicated = 2,
 		/obj/item/stack/medical/mesh/advanced = 2,
 		/obj/item/reagent_containers/pill/patch/libital = 4,
 		/obj/item/reagent_containers/pill/patch/aiuri = 4,
-		/obj/item/healthanalyzer/advanced = 1,
-		/obj/item/stack/medical/gauze = 2,
-		/obj/item/reagent_containers/hypospray/medipen/atropine = 2,
-		/obj/item/reagent_containers/medigel/sterilizine = 1,
-		/obj/item/surgical_drapes = 1,
-		/obj/item/scalpel = 1,
-		/obj/item/hemostat = 1,
-		/obj/item/cautery = 1,
 	)
 	generate_items_inside(items_inside,src)
 
@@ -332,6 +334,7 @@
 		/obj/item/mod/module/health_analyzer = 1,
 		/obj/item/autosurgeon/syndicate/emaggedsurgerytoolset = 1,
 		/obj/item/reagent_containers/hypospray/combat/empty = 1,
+		/obj/item/storage/box/bandages = 1,
 		/obj/item/storage/box/evilmeds = 1,
 		/obj/item/reagent_containers/medigel/sterilizine = 1,
 		/obj/item/clothing/glasses/hud/health/night/science = 1,
@@ -348,9 +351,9 @@
 
 /obj/item/storage/medkit/coroner/Initialize(mapload)
 	. = ..()
-	atom_storage.max_specific_storage = 24
+	atom_storage.max_specific_storage = WEIGHT_CLASS_NORMAL
 	atom_storage.max_slots = 14
-	atom_storage.max_total_storage = WEIGHT_CLASS_NORMAL
+	atom_storage.max_total_storage = 24
 	atom_storage.set_holdable(list(
 		/obj/item/reagent_containers,
 		/obj/item/bodybag,
@@ -387,6 +390,7 @@
 		balloon_alert(user, "items inside!")
 		return
 
+	///if you add a new one don't forget to update /datum/crafting_recipe/medbot/on_craft_completion()
 	var/obj/item/bot_assembly/medbot/medbot_assembly = new
 	if (istype(src, /obj/item/storage/medkit/fire))
 		medbot_assembly.set_skin("ointment")
@@ -398,6 +402,8 @@
 		medbot_assembly.set_skin("brute")
 	else if (istype(src, /obj/item/storage/medkit/advanced))
 		medbot_assembly.set_skin("advanced")
+	else if (istype(src, /obj/item/storage/medkit/tactical))
+		medbot_assembly.set_skin("bezerk")
 	user.put_in_hands(medbot_assembly)
 	medbot_assembly.balloon_alert(user, "arm added")
 	medbot_assembly.robot_arm = bodypart.type
@@ -708,7 +714,7 @@
 /obj/item/storage/organbox/attackby(obj/item/I, mob/user, params)
 	if(is_reagent_container(I) && I.is_open_container())
 		var/obj/item/reagent_containers/RC = I
-		var/units = RC.reagents.trans_to(src, RC.amount_per_transfer_from_this, transfered_by = user)
+		var/units = RC.reagents.trans_to(src, RC.amount_per_transfer_from_this, transferred_by = user)
 		if(units)
 			balloon_alert(user, "[units]u transferred")
 			return

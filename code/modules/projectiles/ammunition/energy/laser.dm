@@ -1,6 +1,6 @@
 /obj/item/ammo_casing/energy/laser
 	projectile_type = /obj/projectile/beam/laser
-	e_cost = 63
+	e_cost = 83
 	select_name = "kill"
 
 /obj/item/ammo_casing/energy/laser/hellfire
@@ -13,8 +13,19 @@
 
 /obj/item/ammo_casing/energy/lasergun
 	projectile_type = /obj/projectile/beam/laser
-	e_cost = 52
+	e_cost = 62.5
 	select_name = "kill"
+
+/obj/item/ammo_casing/energy/lasergun/carbine
+	projectile_type = /obj/projectile/beam/laser/carbine
+	e_cost = 25 // 40 shots
+	select_name = "kill"
+	fire_sound = 'sound/weapons/laser2.ogg'
+
+/obj/item/ammo_casing/energy/lasergun/carbine/practice
+	projectile_type = /obj/projectile/beam/laser/carbine/practice
+	select_name = "practice"
+	harmful = FALSE
 
 /obj/item/ammo_casing/energy/lasergun/old
 	projectile_type = /obj/projectile/beam/laser

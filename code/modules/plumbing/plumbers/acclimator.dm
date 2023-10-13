@@ -12,8 +12,6 @@
 	base_icon_state = "acclimator"
 	buffer = 200
 	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 2
-	///category for plumbing RCD
-	category="Storage"
 
 	///towards wich temperature do we build?
 	var/target_temperature = 300
@@ -25,9 +23,7 @@
 	var/enabled = TRUE
 	///COOLING, HEATING or NEUTRAL. We track this for change, so we dont needlessly update our icon
 	var/acclimate_state
-	/**We can't take anything in, at least till we're emptied. Down side of the round robin chem transfer, otherwise while emptying 5u of an unreacted chem gets added,
-	and you get nasty leftovers
-	*/
+	///When conditions are met we send out the stored reagents
 	var/emptying = FALSE
 
 /obj/machinery/plumbing/acclimator/Initialize(mapload, bolt, layer)

@@ -1,3 +1,5 @@
+/// if we have a hive, this will be our aggro distance
+#define AGGRO_DISTANCE_FROM_HIVE 2
 /datum/ai_behavior/hunt_target/pollinate
 	always_reset_target = TRUE
 
@@ -83,11 +85,26 @@
 
 /datum/targetting_datum/basic/bee
 
-/datum/targetting_datum/basic/bee/can_attack(mob/living/owner, atom/target)
+/datum/targetting_datum/basic/bee/can_attack(mob/living/owner, atom/target, vision_range)
 	if(!isliving(target))
 		return FALSE
 	. = ..()
 	if(!.)
 		return FALSE
+
 	var/mob/living/mob_target = target
+
+	if(mob_target.mob_biotypes & MOB_PLANT)
+		return FALSE
+
+	var/datum/ai_controller/basic_controller/bee_ai = owner.ai_controller
+	if(isnull(bee_ai))
+		return FALSE
+
+	var/atom/bee_hive = bee_ai.blackboard[BB_CURRENT_HOME]
+	if(bee_hive && get_dist(target, bee_hive) > AGGRO_DISTANCE_FROM_HIVE)
+		return FALSE
+
 	return !(mob_target.bee_friendly())
+
+#undef AGGRO_DISTANCE_FROM_HIVE
