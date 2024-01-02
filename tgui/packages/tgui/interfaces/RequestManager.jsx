@@ -5,6 +5,7 @@
  */
 
 import { decodeHtmlEntities } from 'common/string';
+
 import { useBackend, useLocalState } from '../backend';
 import { Button, Input, Section, Table } from '../components';
 import { Popper } from '../components/Popper';
@@ -45,7 +46,7 @@ export const RequestManager = (props) => {
             <>
               <Input
                 value={searchText}
-                onInput={(_, value) => setSearchText(value)}
+                onChange={(_, value) => setSearchText(value)}
                 placeholder={'Search...'}
                 mr={1}
               />
@@ -143,9 +144,7 @@ const FilterPanel = (props) => {
 
   return (
     <Popper
-      options={{
-        placement: 'bottom-start',
-      }}
+      placement="bottom-start"
       popperContent={
         <div
           className="RequestManager__filterPanel"
