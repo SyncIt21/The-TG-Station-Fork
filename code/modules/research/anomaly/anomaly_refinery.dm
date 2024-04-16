@@ -1,4 +1,4 @@
-#define MAX_RADIUS_REQUIRED 18 //maxcap
+#define MAX_RADIUS_REQUIRED 15 //maxcap
 /// How long the compression test can last before the machine just gives up and ejects the items.
 #define COMPRESSION_TEST_TIME (SSOBJ_DT SECONDS * 5)
 
