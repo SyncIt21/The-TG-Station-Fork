@@ -46,8 +46,6 @@
 	var/high_value_sacrifices = 0
 	/// Lazy assoc list of [refs to humans] to [image previews of the human]. Humans that we have as sacrifice targets.
 	var/list/mob/living/carbon/human/sac_targets
-	/// List of all sickly blades linked with heretic mind.
-	var/list/obj/item/melee/sickly_blade/blades_list
 	/// List of all sacrifice target's names, used for end of round report
 	var/list/all_sac_targets = list()
 	/// Whether we're drawing a rune or not
@@ -56,6 +54,8 @@
 	var/static/list/scribing_tools = typecacheof(list(/obj/item/pen, /obj/item/toy/crayon))
 	/// A blacklist of turfs we cannot scribe on.
 	var/static/list/blacklisted_rune_turfs = typecacheof(list(/turf/open/space, /turf/open/openspace, /turf/open/lava, /turf/open/chasm))
+	/// Controls what types of turf we can spread rust to, increases as we unlock more powerful rust abilites
+	var/rust_strength = 0
 	/// Static list of what each path converts to in the UI (colors are TGUI colors)
 	var/static/list/path_to_ui_color = list(
 		PATH_START = "grey",
@@ -84,9 +84,6 @@
 
 /datum/antagonist/heretic/Destroy()
 	LAZYNULL(sac_targets)
-	for(var/obj/item/melee/sickly_blade/blade as anything in blades_list)
-		blade.owner = null
-	LAZYNULL(blades_list)
 	return ..()
 
 /datum/antagonist/heretic/ui_data(mob/user)
@@ -233,7 +230,7 @@
 		GLOB.reality_smash_track.add_tracked_mind(owner)
 
 	RegisterSignals(our_mob, list(COMSIG_MOB_BEFORE_SPELL_CAST, COMSIG_MOB_SPELL_ACTIVATED), PROC_REF(on_spell_cast))
-	RegisterSignal(our_mob, COMSIG_MOB_ITEM_AFTERATTACK, PROC_REF(on_item_afterattack))
+	RegisterSignal(our_mob, COMSIG_USER_ITEM_INTERACTION, PROC_REF(on_item_use))
 	RegisterSignal(our_mob, COMSIG_MOB_LOGIN, PROC_REF(fix_influence_network))
 	RegisterSignal(our_mob, COMSIG_LIVING_POST_FULLY_HEAL, PROC_REF(after_fully_healed))
 
@@ -248,7 +245,7 @@
 	UnregisterSignal(our_mob, list(
 		COMSIG_MOB_BEFORE_SPELL_CAST,
 		COMSIG_MOB_SPELL_ACTIVATED,
-		COMSIG_MOB_ITEM_AFTERATTACK,
+		COMSIG_USER_ITEM_INTERACTION,
 		COMSIG_MOB_LOGIN,
 		COMSIG_LIVING_POST_FULLY_HEAL,
 	))
@@ -289,26 +286,25 @@
 	return SPELL_CANCEL_CAST
 
 /*
- * Signal proc for [COMSIG_MOB_ITEM_AFTERATTACK].
+ * Signal proc for [COMSIG_USER_ITEM_INTERACTION].
  *
  * If a heretic is holding a pen in their main hand,
  * and have mansus grasp active in their offhand,
  * they're able to draw a transmutation rune.
  */
-/datum/antagonist/heretic/proc/on_item_afterattack(mob/living/source, atom/target, obj/item/weapon, proximity_flag, click_parameters)
+/datum/antagonist/heretic/proc/on_item_use(mob/living/source, atom/target, obj/item/weapon, click_parameters)
 	SIGNAL_HANDLER
-
 	if(!is_type_in_typecache(weapon, scribing_tools))
-		return
-	if(!isturf(target) || !isliving(source) || !proximity_flag)
-		return
+		return NONE
+	if(!isturf(target) || !isliving(source))
+		return NONE
 
 	var/obj/item/offhand = source.get_inactive_held_item()
 	if(QDELETED(offhand) || !istype(offhand, /obj/item/melee/touch_attack/mansus_fist))
-		return
+		return NONE
 
 	try_draw_rune(source, target, additional_checks = CALLBACK(src, PROC_REF(check_mansus_grasp_offhand), source))
-	return COMPONENT_CANCEL_ATTACK_CHAIN
+	return ITEM_INTERACT_SUCCESS
 
 /**
  * Attempt to draw a rune on [target_turf].
@@ -665,6 +661,14 @@
  */
 /datum/antagonist/heretic/proc/get_knowledge(wanted)
 	return researched_knowledge[wanted]
+
+/// Makes our heretic more able to rust things.
+/// if side_path_only is set to TRUE, this function does nothing for rust heretics.
+/datum/antagonist/heretic/proc/increase_rust_strength(side_path_only=FALSE)
+	if(side_path_only && get_knowledge(/datum/heretic_knowledge/limited_amount/starting/base_rust))
+		return
+
+	rust_strength++
 
 /**
  * Get a list of all rituals this heretic can invoke on a rune.
