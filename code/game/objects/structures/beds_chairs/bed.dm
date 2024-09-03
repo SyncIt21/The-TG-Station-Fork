@@ -8,7 +8,6 @@
 
 /// Beds
 /obj/structure/bed
-	SET_BASE_VISUAL_PIXEL(0, DEPTH_OFFSET)
 	name = "bed"
 	desc = "This is used to lie in, sleep in or strap on."
 	icon_state = "bed"
@@ -25,6 +24,8 @@
 	var/build_stack_amount = 2
 	/// Mobs standing on it are nudged up by this amount. Also used to align the person back when buckled to it after init.
 	var/elevation = 8
+	/// If this bed can be deconstructed using a wrench
+	var/can_deconstruct = TRUE
 
 /obj/structure/bed/Initialize(mapload)
 	. = ..()
@@ -35,7 +36,8 @@
 
 /obj/structure/bed/examine(mob/user)
 	. = ..()
-	. += span_notice("It's held together by a couple of <b>bolts</b>.")
+	if (can_deconstruct)
+		. += span_notice("It's held together by a couple of <b>bolts</b>.")
 
 /obj/structure/bed/add_context(atom/source, list/context, obj/item/held_item, mob/living/user)
 	if(held_item)
@@ -57,6 +59,8 @@
 	return attack_hand(user, modifiers)
 
 /obj/structure/bed/wrench_act_secondary(mob/living/user, obj/item/weapon)
+	if (!can_deconstruct)
+		return NONE
 	..()
 	weapon.play_tool_sound(src)
 	deconstruct(disassembled = TRUE)
