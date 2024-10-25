@@ -15,7 +15,7 @@
 	icon_state = "blue_pyjamas"
 
 /obj/item/clothing/under/misc/patriotsuit
-	name = "Patriotic Suit"
+	name = "patriotic suit"
 	desc = "Motorcycle not included."
 	icon_state = "ek"
 	inhand_icon_state = null
@@ -60,7 +60,7 @@
 
 /obj/item/clothing/under/misc/adminsuit/Initialize(mapload)
 	. = ..()
-	AddComponent(/datum/component/adjust_fishing_difficulty, -15)
+	AddComponent(/datum/component/adjust_fishing_difficulty, -25)
 
 /datum/armor/clothing_under/adminsuit
 	melee = 100
