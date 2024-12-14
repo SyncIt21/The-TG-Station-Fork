@@ -91,12 +91,11 @@
 /mob/living/proc/is_ears_covered()
 	return null
 
-/mob/living/bullet_act(obj/projectile/proj, def_zone, piercing_hit = FALSE)
+/mob/living/bullet_act(obj/projectile/proj, def_zone, piercing_hit = FALSE, blocked = 0)
 	. = ..()
 	if (. != BULLET_ACT_HIT)
 		return .
 
-	var/blocked = check_projectile_armor(def_zone, proj, is_silent = TRUE)
 	if(blocked >= 100)
 		if(proj.is_hostile_projectile())
 			apply_projectile_effects(proj, def_zone, blocked)
@@ -174,18 +173,21 @@
 /mob/living/check_projectile_armor(def_zone, obj/projectile/impacting_projectile, is_silent)
 	return run_armor_check(def_zone, impacting_projectile.armor_flag, "","",impacting_projectile.armour_penetration, "", is_silent, impacting_projectile.weak_against_armour)
 
-/mob/living/proc/check_projectile_dismemberment(obj/projectile/P, def_zone)
-	return 0
+/mob/living/proc/check_projectile_dismemberment(obj/projectile/proj, def_zone)
+	return
 
 /obj/item/proc/get_volume_by_throwforce_and_or_w_class()
 	if(throwforce && w_class)
 		return clamp((throwforce + w_class) * 5, 30, 100)// Add the item's throwforce to its weight class and multiply by 5, then clamp the value between 30 and 100
-	else if(w_class)
+	if(w_class)
 		return clamp(w_class * 8, 20, 100) // Multiply the item's weight class by 8, then clamp the value between 20 and 100
-	else
-		return 0
+	return 0
 
 /mob/living/proc/set_combat_mode(new_mode, silent = TRUE)
+
+	if(HAS_TRAIT(src, TRAIT_COMBAT_MODE_LOCK))
+		return
+
 	if(combat_mode == new_mode)
 		return
 	. = combat_mode
@@ -202,10 +204,11 @@
 /mob/living/hitby(atom/movable/AM, skipcatch, hitpush = TRUE, blocked = FALSE, datum/thrownthing/throwingdatum)
 	if(!isitem(AM))
 		// Filled with made up numbers for non-items.
-		if(check_block(AM, 30, "\the [AM.name]", THROWN_PROJECTILE_ATTACK, 0, BRUTE))
+		if(check_block(AM, 30, "\the [AM.name]", THROWN_PROJECTILE_ATTACK, 0, BRUTE) & SUCCESSFUL_BLOCK)
 			hitpush = FALSE
 			skipcatch = TRUE
 			blocked = TRUE
+			return SUCCESSFUL_BLOCK
 		else
 			playsound(loc, 'sound/items/weapons/genhit.ogg', 50, TRUE, -1) //Item sounds are handled in the item itself
 			if(!isvendor(AM) && !iscarbon(AM)) //Vendors have special interactions, while carbon mobs already generate visible messages!
@@ -230,7 +233,7 @@
 		hitpush = FALSE
 
 	if(blocked)
-		return TRUE
+		return SUCCESSFUL_BLOCK
 
 	var/mob/thrown_by = thrown_item.thrownby?.resolve()
 	if(thrown_by)
@@ -679,9 +682,9 @@
 
 	var/touch_protection = (methods & VAPOR) ? getarmor(null, BIO) * 0.01 : 0
 	SEND_SIGNAL(source, COMSIG_REAGENTS_EXPOSE_MOB, src, reagents, methods, volume_modifier, show_message, touch_protection)
-	for(var/reagent in reagents)
-		var/datum/reagent/R = reagent
-		. |= R.expose_mob(src, methods, reagents[R], show_message, touch_protection)
+	for(var/datum/reagent/reagent as anything in reagents)
+		var/reac_volume = reagents[reagent]
+		. |= reagent.expose_mob(src, methods, reac_volume, show_message, touch_protection)
 
 /// Simplified ricochet angle calculation for mobs (also the base version doesn't work on mobs)
 /mob/living/handle_ricochet(obj/projectile/ricocheting_projectile)
@@ -802,6 +805,6 @@
 
 /mob/living/proc/check_block(atom/hit_by, damage, attack_text = "the attack", attack_type = MELEE_ATTACK, armour_penetration = 0, damage_type = BRUTE)
 	if(SEND_SIGNAL(src, COMSIG_LIVING_CHECK_BLOCK, hit_by, damage, attack_text, attack_type, armour_penetration, damage_type) & SUCCESSFUL_BLOCK)
-		return TRUE
+		return SUCCESSFUL_BLOCK
 
-	return FALSE
+	return FAILED_BLOCK
