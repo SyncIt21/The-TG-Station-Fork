@@ -6,7 +6,7 @@
 	var/subjectjob = null
 	var/blood_decal_type = /obj/effect/decal/cleanable/blood
 
-/obj/item/food/meat/Initialize(mapload)
+/obj/item/food/meat/Initialize(mapload, blood_dna_list = list("meaty DNA" = get_blood_type(BLOOD_TYPE_MEAT)))
 	. = ..()
 
 	if(!blood_decal_type)
@@ -16,14 +16,14 @@
 		/datum/component/blood_walk,\
 		blood_type = blood_decal_type,\
 		blood_spawn_chance = 45,\
+		transfer_blood_dna = TRUE,\
 		max_blood = custom_materials[custom_materials[1]] / SHEET_MATERIAL_AMOUNT,\
 	)
 
 	AddComponent(
 		/datum/component/bloody_spreader,\
 		blood_left = custom_materials[custom_materials[1]] / SHEET_MATERIAL_AMOUNT,\
-		blood_dna = list("meaty DNA" = "MT-"),\
-		diseases = null,\
+		blood_dna = blood_dna_list,\
 	)
 
 /obj/item/food/meat/slab
@@ -289,7 +289,7 @@
 	bite_consumption = 4
 	tastes = list("meat" = 1, "acid" = 1)
 	foodtypes = RAW | MEAT
-	blood_decal_type = /obj/effect/decal/cleanable/xenoblood
+	blood_decal_type = /obj/effect/decal/cleanable/blood/xeno
 
 /obj/item/food/meat/slab/xeno/make_processable()
 	AddElement(/datum/element/processable, TOOL_KNIFE, /obj/item/food/meat/rawcutlet/xeno, 3, 3 SECONDS, table_required = TRUE, screentip_verb = "Cut")
@@ -669,7 +669,7 @@
 /obj/item/food/meat/rawcutlet/xeno
 	name = "raw xeno cutlet"
 	tastes = list("meat" = 1, "acid" = 1)
-	blood_decal_type = /obj/effect/decal/cleanable/xenoblood
+	blood_decal_type = /obj/effect/decal/cleanable/blood/xeno
 
 /obj/item/food/meat/rawcutlet/xeno/make_grillable()
 	AddComponent(/datum/component/grillable, /obj/item/food/meat/cutlet/xeno, rand(35 SECONDS, 50 SECONDS), TRUE, TRUE)

@@ -52,8 +52,6 @@
 	source.AddComponent(
 		/datum/component/bloody_spreader,\
 		blood_left = (protein_count + fat_count) * 0.3,\
-		blood_dna = list("meaty DNA" = "MT-"),\
-		diseases = null,\
 	)
 
 	// Turfs can't handle the meaty goodness of blood walk.

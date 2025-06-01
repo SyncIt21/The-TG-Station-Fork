@@ -26,13 +26,13 @@
 	var/girder_type = /obj/structure/girder/displaced
 	var/opening = FALSE
 
-
 /obj/structure/falsewall/Initialize(mapload)
 	. = ..()
 	var/obj/item/stack/initialized_mineral = new mineral // Okay this kinda sucks.
 	set_custom_materials(initialized_mineral.mats_per_unit, mineral_amount)
 	qdel(initialized_mineral)
 	air_update_turf(TRUE, TRUE)
+	update_appearance()
 
 /obj/structure/falsewall/attack_hand(mob/user, list/modifiers)
 	if(opening)
@@ -65,7 +65,7 @@
 	if(opening)
 		smoothing_flags = NONE
 	else
-		smoothing_flags = SMOOTH_BITMASK
+		smoothing_flags = SMOOTH_BITMASK | SMOOTH_OBJ
 		QUEUE_SMOOTH(src)
 
 /obj/structure/falsewall/update_icon_state()
@@ -116,7 +116,7 @@
 		return ITEM_INTERACT_SUCCESS
 	return
 
-/obj/structure/falsewall/attackby(obj/item/W, mob/user, params)
+/obj/structure/falsewall/attackby(obj/item/W, mob/user, list/modifiers, list/attack_modifiers)
 	if(!opening)
 		return ..()
 	to_chat(user, span_warning("You must wait until the door has stopped moving!"))
@@ -197,7 +197,7 @@
 	. = ..()
 	RegisterSignal(src, COMSIG_ATOM_PROPAGATE_RAD_PULSE, PROC_REF(radiate))
 
-/obj/structure/falsewall/uranium/attackby(obj/item/W, mob/user, params)
+/obj/structure/falsewall/uranium/attackby(obj/item/W, mob/user, list/modifiers, list/attack_modifiers)
 	radiate()
 	return ..()
 

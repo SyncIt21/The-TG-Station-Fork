@@ -121,7 +121,11 @@
 	var/datum/ai_controller/ai_controller
 
 	/// forensics datum, contains fingerprints, fibres, blood_dna and hiddenprints on this atom
-	var/datum/forensics/forensics
+	var/datum/forensics/forensics = null
+	/// Cached color for all blood on us to avoid doing constant math
+	var/cached_blood_color = null
+	/// Cached emissive alpha for all blood on us to avoid doing constant math
+	var/cached_blood_emissive = null
 
 	/// How this atom should react to having its astar blocking checked
 	var/can_astar_pass = CANASTARPASS_DENSITY
@@ -488,45 +492,24 @@
 
 ///returns the mob's dna info as a list, to be inserted in an object's blood_DNA list
 /mob/living/proc/get_blood_dna_list()
-	if(get_blood_id() != /datum/reagent/blood)
+	var/datum/blood_type/blood_type = get_bloodtype()
+	if (!blood_type)
 		return
-	return list("ANIMAL DNA" = "Y-")
+
+	return list(blood_type.dna_string = blood_type)
 
 ///Get the mobs dna list
 /mob/living/carbon/get_blood_dna_list()
-	if(get_blood_id() != /datum/reagent/blood)
+	var/datum/blood_type/blood_type = get_bloodtype()
+	if (!blood_type)
 		return
-	var/list/blood_dna = list()
-	if(dna)
-		blood_dna[dna.unique_enzymes] = dna.blood_type
-	else
-		blood_dna["UNKNOWN DNA"] = "X*"
-	return blood_dna
 
-/mob/living/carbon/alien/get_blood_dna_list()
-	return list("UNKNOWN DNA" = "X*")
+	if (dna?.unique_enzymes)
+		return list(dna.unique_enzymes = blood_type)
+	return list(blood_type.dna_string = blood_type)
 
 /mob/living/silicon/get_blood_dna_list()
 	return
-
-///to add a mob's dna info into an object's blood_dna list.
-/atom/proc/transfer_mob_blood_dna(mob/living/injected_mob)
-	// Returns 0 if we have that blood already
-	var/new_blood_dna = injected_mob.get_blood_dna_list()
-	if(!new_blood_dna)
-		return FALSE
-	var/old_length = GET_ATOM_BLOOD_DNA_LENGTH(src)
-	add_blood_DNA(new_blood_dna)
-	if(GET_ATOM_BLOOD_DNA_LENGTH(src) == old_length)
-		return FALSE
-	return TRUE
-
-///to add blood from a mob onto something, and transfer their dna info
-/atom/proc/add_mob_blood(mob/living/injected_mob)
-	var/list/blood_dna = injected_mob.get_blood_dna_list()
-	if(!blood_dna)
-		return FALSE
-	return add_blood_DNA(blood_dna)
 
 ///Is this atom in space
 /atom/proc/isinspace()
@@ -896,6 +879,9 @@
 
 			if (contextual_screentip_returns & CONTEXTUAL_SCREENTIP_SET)
 				var/screentip_images = active_hud.screentip_images
+				// Disable screentip images for clients affected by https://www.byond.com/forum/post/2967731
+				if(ISINRANGE(client?.byond_build, MIN_BYOND_BUILD_DISABLE_SCREENTIP_ICONS, MAX_BYOND_BUILD_DISABLE_SCREENTIP_ICONS))
+					screentip_images = FALSE
 				// LMB and RMB on one line...
 				var/lmb_text = build_context(context, SCREENTIP_CONTEXT_LMB, screentip_images)
 				var/rmb_text = build_context(context, SCREENTIP_CONTEXT_RMB, screentip_images)

@@ -65,7 +65,7 @@
 
 	return radius
 
-/obj/machinery/research/anomaly_refinery/attackby(obj/item/tool, mob/living/user, params)
+/obj/machinery/research/anomaly_refinery/attackby(obj/item/tool, mob/living/user, list/modifiers, list/attack_modifiers)
 	if(active)
 		to_chat(user, span_warning("You can't insert [tool] into [src] while [p_theyre()] currently active."))
 		return
