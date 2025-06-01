@@ -17,9 +17,11 @@
 		//add new parts
 		for(var/obj/item in resolved_value)
 			component_parts += item
+			item.forceMove(src)
 			if(istype(item, /obj/item/circuitboard))
 				circuit = item
 
+		//refresh parts to update the machine
 		RefreshParts()
 
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)

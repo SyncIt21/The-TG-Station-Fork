@@ -1009,8 +1009,13 @@ GLOBAL_LIST_EMPTY(map_model_default)
 		else
 			instance = crds.ChangeTurf(members[index], null, CHANGETURF_DEFER_CHANGE)
 
-		if(GLOB.use_preloader && instance)//second preloader pass, for those atoms that don't ..() in New()
+		// second preloader pass, for those atoms that don't ..() in New()
+		if(GLOB.use_preloader && instance)
 			world.preloader_load(instance)
+
+		// delete everything on the turf for a fresh start
+		for(var/atom/thing in instance)
+			qdel(thing)
 	// If this isn't template work, we didn't change our turf and we changed area, then we've gotta handle area lighting transfer
 	else if(!no_changeturf && old_area)
 		// Don't do contain/uncontain stuff, this happens a few lines up when the area actally changes

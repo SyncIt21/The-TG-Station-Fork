@@ -1,12 +1,16 @@
 /obj/machinery/get_save_vars()
 	. = ..()
 
+	//export datum component parts seperately
 	var/list/datum_components = list()
 	for(var/datum/stock_part/part in component_parts)
 		datum_components += "[part.type]"
-	. += list(list("datum_components" = datum_components))
+	if(datum_components.len)
+		. += list(list("datum_components" = datum_components))
 
-	. += NAMEOF(src, contents)
+	//export remaining stock parts & everything else
+	if(contents.len)
+		. += NAMEOF(src, contents)
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
