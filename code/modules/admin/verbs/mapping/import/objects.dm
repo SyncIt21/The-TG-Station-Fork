@@ -22,7 +22,8 @@
 				circuit = item
 
 		//refresh parts to update the machine
-		RefreshParts()
+		if(circuit)
+			RefreshParts()
 
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
 	if(attribute == "materials")
