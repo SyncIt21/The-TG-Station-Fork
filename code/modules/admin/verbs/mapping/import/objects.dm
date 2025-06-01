@@ -1,7 +1,34 @@
+/obj/machinery/restore_saved_value(attribute, resolved_value)
+	if(attribute == "datum_components")
+		//remove existing parts
+		for(var/datum/stock_part/part in component_parts)
+			component_parts -= part
+
+		//add new parts
+		for(var/part_path in resolved_value)
+			component_parts += GLOB.stock_part_datums[text2path(part_path)]
+
+	else if(attribute == "contents")
+		//remove existing parts
+		for(var/obj/part in component_parts)
+			component_parts -= part
+			qdel(part)
+
+		//add new parts
+		for(var/obj/item in resolved_value)
+			component_parts += item
+			if(istype(item, /obj/item/circuitboard))
+				circuit = item
+
+		RefreshParts()
+
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
 	if(attribute == "materials")
 		for(var/material_id in resolved_value)
 			materials.insert_amount_mat(resolved_value[material_id], text2path(material_id))
+		return
+
+	..()
 
 /obj/structure/closet/restore_saved_value(attribute, resolved_value)
 	//the maploader flattens reccursive contents out on the turf(e.g. like a backpack having stuff but its inside the closet)

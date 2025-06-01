@@ -1,9 +1,19 @@
+/obj/machinery/get_save_vars()
+	. = ..()
+
+	var/list/datum_components = list()
+	for(var/datum/stock_part/part in component_parts)
+		datum_components += "[part.type]"
+	. += list(list("datum_components" = datum_components))
+
+	. += NAMEOF(src, contents)
+
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
-	. += NAMEOF(src, charge)
-	. += NAMEOF(src, capacity)
 	. += NAMEOF(src, input_level)
 	. += NAMEOF(src, output_level)
+	for(var/obj/item/stock_parts/power_store/cell in component_parts)
+		cell.charge = (charge / capacity) * cell.maxcharge
 
 /obj/machinery/power/apc/get_save_vars()
 	. = ..()
@@ -69,3 +79,4 @@
 /obj/machinery/button/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, id)
+
