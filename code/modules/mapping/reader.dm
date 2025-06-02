@@ -1014,8 +1014,9 @@ GLOBAL_LIST_EMPTY(map_model_default)
 			world.preloader_load(instance)
 
 		// delete everything on the turf for a fresh start
-		for(var/atom/thing in instance)
-			qdel(thing)
+		if(!no_changeturf)
+			for(var/atom/thing in instance)
+				qdel(thing)
 	// If this isn't template work, we didn't change our turf and we changed area, then we've gotta handle area lighting transfer
 	else if(!no_changeturf && old_area)
 		// Don't do contain/uncontain stuff, this happens a few lines up when the area actally changes

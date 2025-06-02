@@ -10,16 +10,32 @@
 
 	else if(attribute == "contents")
 		//remove existing parts
-		for(var/obj/part in component_parts)
+		for(var/obj/item/part in component_parts)
 			component_parts -= part
 			qdel(part)
 
+		//locate circuit board
+		circuit = locate() in resolved_value
+		circuit.forceMove(src)
+		component_parts += circuit
+
 		//add new parts
-		for(var/obj/item in resolved_value)
-			component_parts += item
-			item.forceMove(src)
-			if(istype(item, /obj/item/circuitboard))
-				circuit = item
+		var/obj/item/circuitboard/machine/mech = circuit
+		if(istype(mech))
+			var/list/req_components = mech.req_components.Copy()
+			for(var/obj/item/part in resolved_value)
+				part.forceMove(src)
+				for(var/part_type in req_components)
+					if(istype(part, part_type))
+						//append the part
+						component_parts += part
+
+						//keep track of how much more are required
+						var/count = req_components[part_type] - 1
+						if(!count)
+							req_components -= part_type
+							continue
+						req_components[part_type] = count
 
 		//refresh parts to update the machine
 		if(circuit)
@@ -30,6 +46,15 @@
 		for(var/material_id in resolved_value)
 			materials.insert_amount_mat(resolved_value[material_id], text2path(material_id))
 		return
+
+	..()
+
+/obj/machinery/space_heater/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		//restore cell from contents
+		cell = locate(/obj/item/stock_parts/power_store) in resolved_value
+
+		return ..()
 
 	..()
 

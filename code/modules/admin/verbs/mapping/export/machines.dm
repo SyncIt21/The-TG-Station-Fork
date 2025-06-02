@@ -1,16 +1,21 @@
 /obj/machinery/get_save_vars()
 	. = ..()
 
-	//export datum component parts seperately
-	var/list/datum_components = list()
-	for(var/datum/stock_part/part in component_parts)
-		datum_components += "[part.type]"
-	if(datum_components.len)
-		. += list(list("datum_components" = datum_components))
+	//only export parts if there is a circuit board that adds the components
+	if(circuit)
+		//export datum component parts seperately
+		var/list/datum_components = list()
+		for(var/datum/stock_part/part in component_parts)
+			datum_components += "[part.type]"
+		if(datum_components.len)
+			. += list(list("datum_components" = datum_components))
 
-	//export remaining stock parts & everything else
-	if(contents.len)
-		. += NAMEOF(src, contents)
+		//export remaining stock parts
+		if(contents.len)
+			for(var/obj/item/thing in contents)
+				if(thing in component_parts)
+					. += NAMEOF(src, contents)
+					return
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
@@ -38,9 +43,10 @@
 
 /obj/machinery/portable_atmospherics/get_save_vars()
 	. = ..()
-	var/datum/gas_mixture/gasmix = air_contents
-	initial_gas_mix = gasmix.to_string()
-	. += NAMEOF(src, initial_gas_mix)
+	var/datum/gas_mixture/gasmix = return_air()
+	if(gasmix)
+		initial_gas_mix = gasmix.to_string()
+		. += NAMEOF(src, initial_gas_mix)
 
 /obj/machinery/portable_atmospherics/canister/get_save_vars()
 	. = ..()

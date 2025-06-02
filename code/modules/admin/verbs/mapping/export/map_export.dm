@@ -1,5 +1,5 @@
 ///Id ref for an exported object
-GLOBAL_VAR_INIT(object_export_id, 1)
+GLOBAL_VAR_INIT(atom_export_id, 1)
 ///Area coords
 GLOBAL_LIST_INIT(save_file_chars, list(
 	"a","b","c","d","e",
@@ -71,7 +71,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 * elsewhere in code if you ever need to get a file in the .dmm format
 **/
 
-/proc/to_list_string(list/build_from, list/obj/obj_refs)
+/proc/to_list_string(list/build_from, list/obj/local_refs, list/obj/global_refs)
 	var/list/build_into = list()
 	build_into += "list("
 	var/first_entry = TRUE
@@ -80,15 +80,15 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 		if(!first_entry)
 			build_into += ", "
 		if(isnum(item) || isnull(build_from[item]))
-			build_into += "[tgm_encode(item, obj_refs)]"
+			build_into += "[tgm_encode(item, local_refs, global_refs)]"
 		else
-			build_into += "[tgm_encode(item, obj_refs)] = [tgm_encode(build_from[item], obj_refs)]"
+			build_into += "[tgm_encode(item, local_refs, global_refs)] = [tgm_encode(build_from[item], local_refs, global_refs)]"
 		first_entry = FALSE
 	build_into += ")"
 	return build_into.Join("")
 
 /// Takes a constant, encodes it into a TGM valid string
-/proc/tgm_encode(value, list/obj/obj_refs)
+/proc/tgm_encode(value, list/local_refs, list/global_refs)
 	if(istext(value))
 		//Prevent symbols from being because otherwise you can name something
 		// [";},/obj/item/gun/energy/laser/instakill{name="da epic gun] and spawn yourself an instakill gun.
@@ -96,22 +96,29 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 	if(isnum(value) || ispath(value))
 		return "[value]"
 	if(islist(value))
-		return to_list_string(value, obj_refs)
+		return to_list_string(value, local_refs, global_refs)
 	if(isnull(value))
 		return "null"
 	if(isicon(value) || isfile(value))
 		return "'[value]'"
-	if(isobj(value))
-		var/ref_id = "%[GLOB.object_export_id]%"
-		obj_refs[ref_id] = value
-		GLOB.object_export_id += 1
+	if(isatom(value))
+		//already written
+		for(var/atom_ref in global_refs)
+			if(value == global_refs[atom_ref])
+				return atom_ref
+
+		//create new id
+		var/ref_id = "%[GLOB.atom_export_id]%"
+		local_refs[ref_id] = value
+		global_refs[ref_id] = value
+		GLOB.atom_export_id += 1
 		return ref_id
 	// not handled:
 	// - pops: /obj{name="foo"}
 	// - new(), newlist(), icon(), matrix(), sound()
 
 	// fallback: string
-	return tgm_encode("[value]", obj_refs)
+	return tgm_encode("[value]", local_refs, global_refs)
 
 /**
  *Procedure for converting a coordinate-selected part of the map into text for the .dmi format
@@ -127,7 +134,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 	shuttle_area_flag = SAVE_SHUTTLEAREA_DONTCARE,
 	list/obj_blacklist = typecacheof(/obj/effect),
 )
-	GLOB.object_export_id = 0
+	GLOB.atom_export_id = 0
 
 	var/width = maxx - minx
 	var/height = maxy - miny
@@ -149,6 +156,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 	var/list/header_data = list() //holds the data of a header -> to its key
 	var/list/header = list() //The actual header in text
 	var/list/contents = list() //The contents in text (bit at the end)
+	var/list/global_refs = list() //all atom refs in the game
 	var/key_index = 1 // How many keys we've generated so far
 	for(var/z in 0 to depth)
 		for(var/x in 0 to width)
@@ -197,14 +205,12 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 				//Add objects to the header file
 				var/empty = TRUE
 				var/list/stuff = pull_from.contents.Copy(1)
-				var/list/obj/obj_refs = list()
 				while(stuff.len)
 					var/ref = popleft(stuff)
 
 					var/atom/thing = ref
 					if(istext(thing))
-						thing = obj_refs[thing]
-
+						thing = global_refs[ref]
 					//====SAVING OBJECTS====
 					if(isobj(thing))
 						var/obj/obj_thing = thing
@@ -226,14 +232,13 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 							continue
 
 					//generate metadata
-					var/list/obj/local_refs = list()
-					current_header += "[empty ? "" : ",\n"][istext(ref) ? ref : ""][thing.type][generate_tgm_metadata(thing, local_refs)]"
+					var/list/local_refs = list()
+					current_header += "[empty ? "" : ",\n"][istext(ref) ? ref : ""][thing.type][generate_tgm_metadata(thing, local_refs, global_refs)]"
 					empty = FALSE
 
 					//save any object references on the object
-					for(var/obj_id in local_refs)
-						obj_refs[obj_id] = local_refs[obj_id]
-						stuff += obj_id
+					for(var/atom_id in local_refs)
+						stuff += atom_id
 
 				current_header += "[empty ? "" : ",\n"][place]"
 				//====SAVING ATMOS====
@@ -253,7 +258,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 			contents += "\"}"
 	return "//[DMM2TGM_MESSAGE]\n[header.Join()][contents.Join()]"
 
-/proc/generate_tgm_metadata(atom/object, list/obj/obj_refs)
+/proc/generate_tgm_metadata(atom/object, list/local_refs, list/global_refs)
 	var/list/data_to_add = list()
 	var/list/vars_to_save = object.get_save_vars()
 
@@ -284,7 +289,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 			if(locate(/atom) in value) //no list that contains atoms is allowed except the contents list cause we can't keep track of their locs
 				continue
 
-		var/text_value = tgm_encode(value, obj_refs)
+		var/text_value = tgm_encode(value, local_refs, global_refs)
 		if(!text_value)
 			continue
 		data_to_add += "[variable] = [text_value]"
