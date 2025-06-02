@@ -2,7 +2,7 @@
 	. = ..()
 
 	//only export parts if there is a circuit board that adds the components
-	if(circuit)
+	if(length(component_parts))
 		//export datum component parts seperately
 		var/list/datum_components = list()
 		for(var/datum/stock_part/part in component_parts)
@@ -10,12 +10,8 @@
 		if(datum_components.len)
 			. += list(list("datum_components" = datum_components))
 
-		//export remaining stock parts
-		if(contents.len)
-			for(var/obj/item/thing in contents)
-				if(thing in component_parts)
-					. += NAMEOF(src, contents)
-					return
+	//export everything else
+	. += NAMEOF(src, contents)
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
