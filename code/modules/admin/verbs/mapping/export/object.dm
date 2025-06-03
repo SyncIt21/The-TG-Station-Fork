@@ -4,6 +4,10 @@
 	. += NAMEOF(src, req_access)
 	. += NAMEOF(src, id_tag)
 
+/obj/effect/decal/cleanable/blood/footprints/get_save_vars()
+	. = ..()
+	. -= NAMEOF(src, icon_state)
+
 /obj/item/get_save_vars()
 	. = ..()
 	if(contents.len && atom_storage)
@@ -20,20 +24,6 @@
 	. += NAMEOF(src, height)
 	. += NAMEOF(src, shuttle_id)
 	. += NAMEOF(src, width)
-
-/obj/machinery/ore_silo/get_save_vars()
-	. = ..()
-
-	var/list/material_list = materials.materials
-	var/list/material_list_string = list()
-	for(var/datum/material/mat in material_list)
-		if(!material_list[mat])
-			continue
-		material_list_string["[mat.type]"] = material_list[mat]
-	if(!material_list_string.len)
-		return
-
-	. += list(list("materials" = material_list_string))
 
 /obj/item/pipe/get_save_vars()
 	. = ..()
@@ -54,6 +44,21 @@
 	. = ..()
 	. -= NAMEOF(src, icon)
 
-/obj/effect/decal/cleanable/blood/footprints/get_save_vars()
+/obj/item/modular_computer/get_save_vars()
 	. = ..()
-	. -= NAMEOF(src, icon_state)
+
+	//we dont save stuff like the cpu directly as that errors in init
+	. -= NAMEOF(src, contents)
+
+	//store power source
+	if(!QDELETED(internal_cell))
+		. += NAMEOF(src, internal_cell)
+
+	//store all programs that don't load up on default
+	var/list/stored_files = list("stored_files" = list())
+	for(var/datum/computer_file/program in stored_files)
+		if(program.type in starting_programs)
+			continue
+		stored_files["stored_files"] += "[program.type]"
+	if(length(stored_files["stored_files"]))
+		. += list(stored_files)

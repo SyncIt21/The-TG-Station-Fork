@@ -13,6 +13,21 @@
 	//export everything else
 	. += NAMEOF(src, contents)
 
+
+/obj/machinery/ore_silo/get_save_vars()
+	. = ..()
+
+	var/list/material_list = materials.materials
+	var/list/material_list_string = list()
+	for(var/datum/material/mat in material_list)
+		if(!material_list[mat])
+			continue
+		material_list_string[mat.type] = material_list[mat]
+	if(!material_list_string.len)
+		return
+
+	. += list(list("materials" = material_list_string))
+
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, input_level)
@@ -86,3 +101,17 @@
 	. = ..()
 	. += NAMEOF(src, id)
 
+/obj/machinery/modular_computer/get_save_vars()
+	. = ..()
+
+	//so we dont save the internal cpu and stuff
+	. -= NAMEOF(src, contents)
+
+	//to save starting programs of the cpu
+	var/list/stored_files = list("stored_files" = list())
+	for(var/datum/computer_file/file in cpu.stored_files)
+		if(file.type in cpu.starting_programs)
+			continue
+		stored_files["stored_files"] += "[file.type]"
+	if(length(stored_files["stored_files"]))
+		. += list(stored_files)

@@ -11,3 +11,16 @@
 		return
 
 	..()
+
+/obj/item/modular_computer/restore_saved_value(attribute, resolved_value)
+	//restore saved files
+	if(attribute == "stored_files")
+		for(var/program_type in resolved_value)
+			var/datum/computer_file/program = text2path(program_type)
+			program = new program
+			if(!store_file(program))
+				qdel(program)
+
+		return
+
+	..()

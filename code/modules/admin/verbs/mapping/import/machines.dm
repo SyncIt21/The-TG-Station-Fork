@@ -30,7 +30,8 @@
 			component_parts += circuit
 			if(istype(board, /obj/item/circuitboard/machine))
 				var/obj/item/circuitboard/machine/mech = circuit
-				req_components = mech.req_components.Copy()
+				if(length(mech.req_components)) //vat grower dont have this
+					req_components = mech.req_components.Copy()
 
 		//other stuff which can also be part of component_parts should be filtered out
 		for(var/atom/movable/thing in contents)
@@ -55,6 +56,8 @@
 		if(should_refresh)
 			RefreshParts()
 			should_refresh = FALSE
+	else
+		..()
 
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
 	if(attribute == "materials")
@@ -78,3 +81,17 @@
 
 	if(attribute == "contents")
 		cell = locate() in resolved_value
+
+
+/obj/machinery/modular_computer/restore_saved_value(attribute, resolved_value)
+	//restore saved files
+	if(attribute == "stored_files")
+		for(var/program_type in resolved_value)
+			var/datum/computer_file/program = text2path(program_type)
+			program = new program
+			if(!cpu.store_file(program))
+				qdel(program)
+
+		return
+
+	..()

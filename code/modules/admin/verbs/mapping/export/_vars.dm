@@ -25,6 +25,16 @@
 		. += NAMEOF(src, damage_deflection)
 		. += NAMEOF(src, resistance_flags)
 
+	if(!QDELETED(reagents))
+		var/list/reagent_list = list(
+			"max_volume" = reagents.maximum_volume,
+			"flags" =  reagents.flags,
+			"temp" = reagents.chem_temp
+		)
+		for(var/datum/reagent/reg as anything in reagents.reagent_list)
+			reagent_list[reg.type] = "[reg.volume]/[reg.ph]/[reg.purity]"
+		. += list(list("reagents" = reagent_list))
+
 /atom/movable/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, anchored)
