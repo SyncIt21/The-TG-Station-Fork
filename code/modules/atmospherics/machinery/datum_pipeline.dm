@@ -19,6 +19,8 @@
 	var/update = TRUE
 	///Is this pipeline being reconstructed?
 	var/building = FALSE
+	///Was the pipeline value saved during map export
+	var/saved = FALSE
 
 /datum/pipeline/New()
 	other_airs = list()

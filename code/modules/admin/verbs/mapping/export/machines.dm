@@ -13,7 +13,6 @@
 	//export everything else
 	. += NAMEOF(src, contents)
 
-
 /obj/machinery/ore_silo/get_save_vars()
 	. = ..()
 
@@ -51,30 +50,6 @@
 		. += NAMEOF(src, start_charge)
 
 	// TODO save the wire data but need to include states for cute wires, signalers attached to wires, etc.
-
-/obj/machinery/portable_atmospherics/get_save_vars()
-	. = ..()
-	var/datum/gas_mixture/gasmix = return_air()
-	if(gasmix)
-		initial_gas_mix = gasmix.to_string()
-		. += NAMEOF(src, initial_gas_mix)
-
-/obj/machinery/portable_atmospherics/canister/get_save_vars()
-	. = ..()
-	. += NAMEOF(src, valve_open)
-	. += NAMEOF(src, release_pressure)
-
-/obj/machinery/atmospherics/get_save_vars()
-	. = ..()
-	. += NAMEOF(src, piping_layer)
-	. += NAMEOF(src, pipe_color)
-
-/obj/machinery/atmospherics/components/get_save_vars()
-	. = ..()
-	if(!override_naming)
-		// Prevents saving the dynamic name with \proper due to it converting to "???"
-		. -= NAMEOF(src, name)
-	. += NAMEOF(src, welded)
 
 /obj/machinery/airalarm/get_save_vars()
 	. = ..()
