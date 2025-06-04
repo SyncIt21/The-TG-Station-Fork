@@ -1,5 +1,3 @@
-///Id ref for an exported object
-GLOBAL_VAR_INIT(atom_export_id, 1)
 ///Area coords
 GLOBAL_LIST_INIT(save_file_chars, list(
 	"a","b","c","d","e",
@@ -102,17 +100,14 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 	if(isicon(value) || isfile(value))
 		return "'[value]'"
 	if(isatom(value))
+		var/ref = REF(value)
 		//already written
-		for(var/atom_ref in global_refs)
-			if(value == global_refs[atom_ref])
-				return atom_ref
-
-		//create new id
-		var/ref_id = "%[GLOB.atom_export_id]%"
-		local_refs[ref_id] = value
-		global_refs[ref_id] = value
-		GLOB.atom_export_id += 1
-		return ref_id
+		if(global_refs[ref])
+			return ref
+		//write to file
+		local_refs[ref] = global_refs[ref] = value
+		//return ref
+		return ref
 	// not handled:
 	// - pops: /obj{name="foo"}
 	// - new(), newlist(), icon(), matrix(), sound()
@@ -134,8 +129,6 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 	shuttle_area_flag = SAVE_SHUTTLEAREA_DONTCARE,
 	list/obj_blacklist = typecacheof(/obj/effect),
 )
-	GLOB.atom_export_id = 0
-
 	var/width = maxx - minx
 	var/height = maxy - miny
 	var/depth = maxz - minz

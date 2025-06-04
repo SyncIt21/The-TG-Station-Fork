@@ -702,7 +702,7 @@ GLOBAL_LIST_EMPTY(map_model_default)
 	//ref value
 	else if(istext(value))
 		var/length = length(value)
-		if(length && value[1] == "%" && length > 2 && value[length] == "%") //its an ref to another atom
+		if(length && value[1] == "\[" && length > 2 && value[length] == "]") //its an ref to another atom
 			ref_attributes[attribute] = value
 	return attribute
 
@@ -799,8 +799,8 @@ GLOBAL_LIST_EMPTY(map_model_default)
 
 			// check path to see if its member attribute value
 			// its format is %<number>%/<actual object path>
-			if(path_to_init[1] == "%")
-				var/last_index = findlasttext_char(path_to_init, "%")
+			if(path_to_init[1] == "\[")
+				var/last_index = findlasttext_char(path_to_init, "]")
 				if(last_index)
 					last_index += 1
 					var/obj_ref_id = copytext(path_to_init, 1, last_index)
@@ -887,8 +887,8 @@ GLOBAL_LIST_EMPTY(map_model_default)
 			// check path to see if its member attribute value
 			// its format is %<number>%/<actual object path>
 			var/list/ref_attributes = list()
-			if(path_text[1] == "%")
-				var/last_index = findlasttext_char(path_text, "%")
+			if(path_text[1] == "\[")
+				var/last_index = findlasttext_char(path_text, "]")
 				if(last_index)
 					last_index += 1
 					ref_attributes[OBJ_REF_ID] = copytext(path_text, 1, last_index)
@@ -1095,7 +1095,7 @@ GLOBAL_LIST_EMPTY(map_model_default)
 						var/atom/movable/thing = atom_refs[ref]
 						if(ismovable(thing) && !QDELETED(thing))
 							resolved_contents += thing
-						resolved_members += list(list(attribute, resolved_contents))
+					resolved_members += list(list("contents", resolved_contents))
 				else
 					var/resolved_value
 					if(attribute[1] == "#")
