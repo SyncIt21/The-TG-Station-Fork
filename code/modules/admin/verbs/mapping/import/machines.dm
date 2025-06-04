@@ -7,7 +7,7 @@
 
 		//add new parts
 		for(var/part_path in resolved_value)
-			component_parts += GLOB.stock_part_datums[text2path(part_path)]
+			component_parts += GLOB.stock_part_datums[part_path]
 
 		should_refresh = TRUE
 
@@ -59,17 +59,80 @@
 	else
 		..()
 
+/obj/machinery/chem_heater/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		QDEL_NULL(beaker)
+
+		beaker = locate() in resolved_value
+
+		return ..()
+
+	..()
+
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
 	if(attribute == "materials")
-		for(var/material_id in resolved_value)
-			materials.insert_amount_mat(resolved_value[material_id], text2path(material_id))
+		SSmaterials.set_list(materials, resolved_value)
+
+		return
+
+	..()
+
+/obj/machinery/rnd/production/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		materials.disconnect_from(materials.silo)
+
+		SSmaterials.set_list(materials.mat_container, resolved_value)
+
+		return
+
+	..()
+
+/obj/machinery/mecha_part_fabricator/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		rmat.disconnect_from(rmat.silo)
+
+		SSmaterials.set_list(rmat.mat_container, resolved_value)
+
+		return
+
+	..()
+
+
+/obj/machinery/component_printer/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		materials.disconnect_from(materials.silo)
+
+		SSmaterials.set_list(materials.mat_container, resolved_value)
+
+		return
+
+	..()
+
+
+/obj/machinery/bouldertech/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		silo_materials.disconnect_from(silo_materials.silo)
+
+		SSmaterials.set_list(silo_materials.mat_container, resolved_value)
+
+		return
+
+	..()
+
+/obj/machinery/mineral/ore_redemption/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		materials.disconnect_from(materials.silo)
+
+		SSmaterials.set_list(materials.mat_container, resolved_value)
+
 		return
 
 	..()
 
 /obj/machinery/space_heater/restore_saved_value(attribute, resolved_value)
 	if(attribute == "contents")
-		//restore cell from contents
+		QDEL_NULL(cell)
+
 		cell = locate(/obj/item/stock_parts/power_store) in resolved_value
 
 		return ..()
@@ -77,10 +140,14 @@
 	..()
 
 /obj/machinery/electrolyzer/restore_saved_value(attribute, resolved_value)
-	..()
-
 	if(attribute == "contents")
+		QDEL_NULL(cell)
+
 		cell = locate() in resolved_value
+
+		return ..()
+
+	..()
 
 
 /obj/machinery/modular_computer/restore_saved_value(attribute, resolved_value)
@@ -93,5 +160,45 @@
 				qdel(program)
 
 		return
+
+	..()
+
+/obj/machinery/power/apc/restore_saved_value(attribute, resolved_value)
+	if(attribute == "cell")
+		cell = resolved_value
+		update_appearance()
+		return
+
+	..()
+
+/obj/machinery/reagentgrinder/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		QDEL_NULL(beaker)
+
+		beaker = locate() in resolved_value
+
+		return ..()
+
+	..()
+
+/obj/machinery/chem_master/restore_saved_value(attribute, resolved_value)
+	if(attribute == "beaker")
+		QDEL_NULL(beaker)
+
+		beaker = resolved_value
+
+		return
+
+	..()
+
+/obj/machinery/chem_dispenser/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		QDEL_NULL(cell)
+		cell = locate() in resolved_value
+
+		QDEL_NULL(beaker)
+		beaker = locate() in resolved_value
+
+		return ..()
 
 	..()

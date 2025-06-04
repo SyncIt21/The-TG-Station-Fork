@@ -6,7 +6,7 @@
 		//export datum component parts seperately
 		var/list/datum_components = list()
 		for(var/datum/stock_part/part in component_parts)
-			datum_components += "[part.type]"
+			datum_components += part.type
 		if(datum_components.len)
 			. += list(list("datum_components" = datum_components))
 
@@ -16,16 +16,52 @@
 /obj/machinery/ore_silo/get_save_vars()
 	. = ..()
 
-	var/list/material_list = materials.materials
-	var/list/material_list_string = list()
-	for(var/datum/material/mat in material_list)
-		if(!material_list[mat])
-			continue
-		material_list_string[mat.type] = material_list[mat]
-	if(!material_list_string.len)
-		return
+	. += list(list("materials" = SSmaterials.to_list(materials)))
 
-	. += list(list("materials" = material_list_string))
+/obj/machinery/chem_master/get_save_vars()
+	. = ..()
+
+	. += NAMEOF(src, beaker)
+
+/obj/machinery/chem_heater/get_save_vars()
+	. = ..()
+
+	. += NAMEOF(src, target_temperature)
+	. += NAMEOF(src, heater_coefficient)
+	. += NAMEOF(src, on)
+	. += NAMEOF(src, dispense_volume)
+	. += NAMEOF(src, beaker)
+
+/obj/machinery/rnd/production/get_save_vars()
+	. = ..()
+
+	if(QDELETED(materials.silo))
+		. += list(list("local_container" = SSmaterials.to_list(materials.mat_container)))
+
+/obj/machinery/mecha_part_fabricator/get_save_vars()
+	. = ..()
+
+	if(QDELETED(rmat.silo))
+		. += list(list("local_container" = SSmaterials.to_list(rmat.mat_container)))
+
+
+/obj/machinery/component_printer/get_save_vars()
+	. = ..()
+
+	if(QDELETED(materials.silo))
+		. += list(list("local_container" = SSmaterials.to_list(materials.mat_container)))
+
+/obj/machinery/bouldertech/get_save_vars()
+	. = ..()
+
+	if(QDELETED(silo_materials.silo))
+		. += list(list("local_container" = SSmaterials.to_list(silo_materials.mat_container)))
+
+/obj/machinery/mineral/ore_redemption/get_save_vars()
+	. = ..()
+
+	if(QDELETED(materials.silo))
+		. += list(list("local_container" = SSmaterials.to_list(materials.mat_container)))
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
@@ -44,11 +80,8 @@
 	. += NAMEOF(src, equipment)
 	. += NAMEOF(src, environ)
 
-	. += NAMEOF(src, cell_type)
-	if(cell_type)
-		start_charge = cell.charge / cell.maxcharge // only used in Initialize() so direct edit is fine
-		. += NAMEOF(src, start_charge)
-
+	cell_type = null
+	. += NAMEOF(src, cell)
 	// TODO save the wire data but need to include states for cute wires, signalers attached to wires, etc.
 
 /obj/machinery/airalarm/get_save_vars()
