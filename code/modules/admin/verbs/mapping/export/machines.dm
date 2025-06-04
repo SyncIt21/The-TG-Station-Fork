@@ -32,6 +32,12 @@
 	. += NAMEOF(src, dispense_volume)
 	. += NAMEOF(src, beaker)
 
+
+/obj/machinery/autolathe/get_save_vars()
+	. = ..()
+
+	. += list(list("local_container" = SSmaterials.to_list(materials)))
+
 /obj/machinery/rnd/production/get_save_vars()
 	. = ..()
 

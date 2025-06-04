@@ -69,6 +69,14 @@
 
 	..()
 
+/obj/machinery/autolathe/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
+		SSmaterials.set_list(materials, resolved_value)
+
+		return
+
+	..()
+
 /obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
 	if(attribute == "materials")
 		SSmaterials.set_list(materials, resolved_value)
