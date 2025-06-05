@@ -17,3 +17,8 @@
 /obj/structure/falsewall/get_save_vars()
 	. = ..()
 	. -= NAMEOF(src, icon)
+
+/obj/structure/tank_dispenser/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, oxygentanks)
+	. += NAMEOF(src, plasmatanks)

@@ -157,7 +157,6 @@
 
 	..()
 
-
 /obj/machinery/modular_computer/restore_saved_value(attribute, resolved_value)
 	//restore saved files
 	if(attribute == "stored_files")
@@ -185,6 +184,8 @@
 
 		beaker = locate() in resolved_value
 
+		update_appearance(UPDATE_OVERLAYS)
+
 		return ..()
 
 	..()
@@ -194,6 +195,8 @@
 		QDEL_NULL(beaker)
 
 		beaker = resolved_value
+
+		update_appearance(UPDATE_OVERLAYS)
 
 		return
 
@@ -206,6 +209,8 @@
 
 		QDEL_NULL(beaker)
 		beaker = locate() in resolved_value
+
+		update_appearance()
 
 		return ..()
 

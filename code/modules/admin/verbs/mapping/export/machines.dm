@@ -50,7 +50,6 @@
 	if(QDELETED(rmat.silo))
 		. += list(list("local_container" = SSmaterials.to_list(rmat.mat_container)))
 
-
 /obj/machinery/component_printer/get_save_vars()
 	. = ..()
 
