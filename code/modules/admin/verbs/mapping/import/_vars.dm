@@ -53,8 +53,12 @@
 	..()
 
 /turf/open/restore_saved_value(attribute, resolved_value)
-	if(attribute == "pipe_display")
+	if(attribute == "show_on_top")
 		for(var/obj/machinery/atmospherics/pipe/thing in contents)
+			///We don't deal with atoms that don't go under a tile
+			if(!HAS_TRAIT(thing, TRAIT_UNDERTILE))
+				continue
+			///Send the signal to display everything on top
 			SEND_SIGNAL(thing, COMSIG_OBJ_HIDE, UNDERFLOOR_INTERACTABLE)
 
 		return

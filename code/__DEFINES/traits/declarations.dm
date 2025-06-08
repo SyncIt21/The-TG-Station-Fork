@@ -1110,6 +1110,8 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_CURRENTLY_CLEANING "currently_cleaning"
 /// Objects with this trait are deleted if they fall into chasms, rather than entering abstract storage
 #define TRAIT_CHASM_DESTROYED "chasm_destroyed"
+/// An movable atom that has /datum/element/undertile attached
+#define TRAIT_UNDERTILE "undertile"
 /// Trait from being under the floor in some manner
 #define TRAIT_UNDERFLOOR "underfloor"
 /// If the movable shouldn't be reflected by mirrors.

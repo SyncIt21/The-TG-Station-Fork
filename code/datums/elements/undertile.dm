@@ -25,6 +25,7 @@
 	if(!ismovable(target))
 		return ELEMENT_INCOMPATIBLE
 
+	ADD_TRAIT(target, TRAIT_UNDERTILE, REF(src))
 	RegisterSignal(target, COMSIG_OBJ_HIDE, PROC_REF(hide))
 
 	src.invisibility_trait = invisibility_trait
@@ -100,6 +101,7 @@
 /datum/element/undertile/Detach(atom/movable/source, visibility_trait, invisibility_level = INVISIBILITY_MAXIMUM)
 	. = ..()
 
+	REMOVE_TRAIT(source, TRAIT_UNDERTILE, REF(src))
 	hide(source, UNDERFLOOR_INTERACTABLE)
 	source.RemoveInvisibility(type)
 
