@@ -1,6 +1,8 @@
 /obj/machinery/atmospherics/restore_saved_value(attribute, resolved_value)
 	if(attribute == "on")
-		set_on(resolved_value)
+		on = FALSE
+
+		set_on(TRUE)
 
 		return
 

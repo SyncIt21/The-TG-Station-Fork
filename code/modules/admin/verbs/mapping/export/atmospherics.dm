@@ -29,9 +29,10 @@
 	. = ..()
 
 	//save the pipeline just once
-	if(parent && !saved_pipelines[parent])
-		. += list(list("air" = parent.air.to_string()))
-		saved_pipelines[parent] = TRUE
+	if(parent)
+		if(!saved_pipelines[parent])
+			. += list(list("air" = parent.air.to_string()))
+			saved_pipelines[parent] = TRUE
 		return
 
 	//save temporary air in the absence of a pipeline
