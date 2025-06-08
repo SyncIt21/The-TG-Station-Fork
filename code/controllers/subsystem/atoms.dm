@@ -39,6 +39,8 @@ SUBSYSTEM_DEF(atoms)
 	InitializeAtoms()
 	initialized = INITIALIZATION_INNEW_REGULAR
 
+	SSmapping.resolve_atom_refs()
+
 	return SS_INIT_SUCCESS
 
 /datum/controller/subsystem/atoms/proc/InitializeAtoms(list/atoms, list/atoms_to_return)

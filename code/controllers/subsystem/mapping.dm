@@ -89,6 +89,9 @@ SUBSYSTEM_DEF(mapping)
 	/// list of lazy templates that have been loaded
 	var/list/loaded_lazy_templates
 
+	///list of parsed maps that need their atom refs resolved
+	var/list/atom_ref_maps = list()
+
 /datum/controller/subsystem/mapping/PreInit()
 	..()
 #ifdef FORCE_MAP
@@ -437,7 +440,10 @@ Used by the AI doomsday and the self-destruct nuke.
 	// load the station
 	station_start = world.maxz + 1
 	INIT_ANNOUNCE("Loading [current_map.map_name]...")
-	LoadGroup(FailedZs, "Station", current_map.map_path, current_map.map_file, current_map.traits, ZTRAITS_STATION, height_autosetup = current_map.height_autosetup)
+	var/list/datum/parsed_map/maps = LoadGroup(FailedZs, "Station", current_map.map_path, current_map.map_file, current_map.traits, ZTRAITS_STATION, height_autosetup = current_map.height_autosetup)
+	for(var/datum/parsed_map/map in maps)
+		if(map.init_atom_refs.len)
+			atom_ref_maps += map
 
 	if(SSdbcore.Connect())
 		var/datum/db_query/query_round_map_name = SSdbcore.NewQuery({"
@@ -466,6 +472,12 @@ Used by the AI doomsday and the self-destruct nuke.
 	// Custom maps are removed after station loading so the map files does not persist for no reason.
 	if(current_map.map_path == CUSTOM_MAP_PATH)
 		fdel("_maps/custom/[current_map.map_file]")
+
+///Resolve atom refs of all parsed map templates
+/datum/controller/subsystem/mapping/proc/resolve_atom_refs()
+	for(var/datum/parsed_map/atom_ref_map in atom_ref_maps)
+		atom_ref_map.resolve_atom_refs()
+	atom_ref_maps.Cut()
 
 /**
  * Global list of AREA TYPES that are associated with the station.

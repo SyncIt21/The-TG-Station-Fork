@@ -22,11 +22,14 @@
 	buckle_requires_restraints = TRUE
 	buckle_lying = NO_BUCKLE_LYING
 
-/obj/machinery/atmospherics/pipe/New()
+	///List of pipelines saved during map export.
+	var/static/list/datum/pipeline/saved_pipelines = list()
+
+/obj/machinery/atmospherics/pipe/Initialize(mapload, process, setdir, init_dir)
 	add_atom_colour(pipe_color, FIXED_COLOUR_PRIORITY)
 	if (!volume) // Pipes can have specific volumes or have it determined by their device_type.
 		volume = UNARY_PIPE_VOLUME * device_type
-	. = ..()
+	return ..()
 
 /obj/machinery/atmospherics/pipe/proc/set_volume(new_volume)
 	if(volume == new_volume)

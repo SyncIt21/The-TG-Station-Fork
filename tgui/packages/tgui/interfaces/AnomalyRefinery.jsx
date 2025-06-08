@@ -73,7 +73,7 @@ const AnomalyRefineryContent = (props) => {
 
 const CoreCompressorContent = (props) => {
   const { act, data } = useBackend();
-  const { core, requiredRadius, gasList, valveReady, active, valvePresent } =
+  const { core, requiredRadius, implosionsLeft, gasList, valveReady, active, valvePresent } =
     data;
   return (
     <>
@@ -101,6 +101,9 @@ const CoreCompressorContent = (props) => {
               {requiredRadius
                 ? requiredRadius + ' tiles'
                 : 'Implosion not possible.'}
+            </LabeledList.Item>
+            <LabeledList.Item label={'Implosions Left'}>
+              {implosionsLeft}
             </LabeledList.Item>
           </LabeledList>
         </Section>
