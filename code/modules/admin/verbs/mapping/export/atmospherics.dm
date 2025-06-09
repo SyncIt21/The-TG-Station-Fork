@@ -53,7 +53,9 @@
 		if(stored_air.total_moles() > MINIMUM_MOLE_COUNT)
 			//because list values are parsed at the = sign so we replace it
 			stored_airs["airs"] += replacetext(stored_air.to_string(), "=", "%") + "/[i]"
-	. += list(stored_airs)
+
+	if(length(stored_airs["airs"]))
+		. += list(stored_airs)
 
 /obj/machinery/atmospherics/components/unary/thermomachine/get_save_vars()
 	. = ..()

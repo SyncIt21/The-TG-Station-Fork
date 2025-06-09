@@ -1,5 +1,4 @@
 /obj/machinery/restore_saved_value(attribute, resolved_value)
-	var/static/should_refresh = FALSE
 	if(attribute == "datum_components")
 		//remove existing parts
 		for(var/datum/stock_part/part in component_parts)
@@ -7,11 +6,15 @@
 
 		//add new parts
 		for(var/part_path in resolved_value)
+			//signal to refresh parts
+			if(istext(part_path))
+				RefreshParts()
+				break
 			component_parts += GLOB.stock_part_datums[part_path]
 
-		should_refresh = TRUE
+		return
 
-	else if(attribute == "contents")
+	if(attribute == "contents")
 		var/list/contents = resolved_value
 		var/list/req_components = null
 
@@ -34,6 +37,7 @@
 					req_components = mech.req_components.Copy()
 
 		//other stuff which can also be part of component_parts should be filtered out
+		var/should_refresh = FALSE
 		for(var/atom/movable/thing in contents)
 			thing.forceMove(src)
 
@@ -42,6 +46,9 @@
 					//append the part
 					component_parts += thing
 
+					//time to refresh
+					should_refresh = TRUE
+
 					//keep track of how much more are required
 					var/count = req_components[part_type] - 1
 					if(!count)
@@ -49,15 +56,12 @@
 						continue
 					req_components[part_type] = count
 
-					//time to refresh
-					should_refresh = TRUE
-
-		//time to refresh
 		if(should_refresh)
 			RefreshParts()
-			should_refresh = FALSE
-	else
-		..()
+
+		return
+
+	..()
 
 /obj/machinery/chem_heater/restore_saved_value(attribute, resolved_value)
 	if(attribute == "contents")
@@ -219,6 +223,16 @@
 /obj/machinery/power/supermatter_crystal/restore_saved_value(attribute, resolved_value)
 	if(attribute == "absorbed_gases")
 		absorbed_gasmix = SSair.parse_gas_string(resolved_value)
+
+		return
+
+	..()
+
+/obj/machinery/airalarm/restore_saved_value(attribute, resolved_value)
+	if(attribute == "air_sensor")
+		air_sensor_chamber_id = resolved_value
+
+		setup_chamber_link()
 
 		return
 

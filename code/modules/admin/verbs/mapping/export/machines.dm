@@ -1,12 +1,15 @@
 /obj/machinery/get_save_vars()
 	. = ..()
 
-	//only export parts if there is a circuit board that adds the components
 	if(length(component_parts))
 		//export datum component parts seperately
 		var/list/datum_components = list()
 		for(var/datum/stock_part/part in component_parts)
 			datum_components += part.type
+		//if we have an atom part defer refreshing parts
+		if(!(locate(/atom/movable) in (component_parts - circuit)))
+			datum_components += "refresh"
+		//save as custom var
 		if(datum_components.len)
 			. += list(list("datum_components" = datum_components))
 
@@ -155,3 +158,14 @@
 
 	if(!QDELETED(board))
 		. += NAMEOF(src, board)
+
+/obj/machinery/airalarm/get_save_vars()
+	. = ..()
+
+	. += NAMEOF(src, allow_link_change)
+	if(length(air_sensor_chamber_id))
+		. += list(list("air_sensor" = air_sensor_chamber_id))
+
+/obj/machinery/air_sensor/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, id_tag)
