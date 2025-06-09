@@ -19,6 +19,16 @@
 
 	..()
 
+/obj/machinery/atmospherics/components/restore_saved_value(attribute, resolved_value)
+	if(attribute == "airs")
+		for(var/gas in resolved_value)
+			var/list/gas_data = splittext(gas, "/")
+			airs[text2num(gas_data[2])] = SSair.parse_gas_string(replacetext(gas_data[1], "%", "="))
+
+		return
+
+	..()
+
 /obj/machinery/atmospherics/components/binary/crystallizer/restore_saved_value(attribute, resolved_value)
 	if(attribute == "recipe")
 		selected_recipe = GLOB.gas_recipe_meta[resolved_value]

@@ -9,6 +9,7 @@
 	. = ..()
 	. += NAMEOF(src, valve_open)
 	. += NAMEOF(src, release_pressure)
+	. -= NAMEOF(src, contents)
 
 /obj/machinery/air_sensor/get_save_vars()
 	. = ..()
@@ -45,6 +46,14 @@
 		// Prevents saving the dynamic name with \proper due to it converting to "???"
 		. -= NAMEOF(src, name)
 	. += NAMEOF(src, welded)
+
+	var/list/datum/gas_mixture/stored_airs = list("airs" = list())
+	for(var/i in 1 to device_type)
+		var/datum/gas_mixture/stored_air = airs[i]
+		if(stored_air.total_moles() > MINIMUM_MOLE_COUNT)
+			//because list values are parsed at the = sign so we replace it
+			stored_airs["airs"] += replacetext(stored_air.to_string(), "=", "%") + "/[i]"
+	. += list(stored_airs)
 
 /obj/machinery/atmospherics/components/unary/thermomachine/get_save_vars()
 	. = ..()
@@ -116,7 +125,9 @@
 	. += NAMEOF(src, widenet)
 
 	if(filter_types.len)
-		var/list/filters = list("filters" = list())
-		for(var/datum/gas/id in filter_types)
-			filters["filters"] += id.type
-		. += list(filters)
+		. += list("filters" = filter_types)
+
+/obj/machinery/atmospherics/components/trinary/filter/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, transfer_rate)
+	. += NAMEOF(src, filter_type)
