@@ -23,8 +23,7 @@
 	if(attribute == "airs")
 		for(var/gas in resolved_value)
 			var/list/gas_data = splittext(gas, "/")
-			airs[text2num(gas_data[2])] = SSair.parse_gas_string(replacetext(gas_data[1], "%", "="))
-		reconnect_nodes()
+			airs[text2num(gas_data[2])].merge(SSair.parse_gas_string(replacetext(gas_data[1], "%", "=")))
 
 		return
 
@@ -33,7 +32,7 @@
 /obj/machinery/atmospherics/components/binary/crystallizer/restore_saved_value(attribute, resolved_value)
 	if(attribute == "recipe")
 		selected_recipe = GLOB.gas_recipe_meta[resolved_value]
-		reconnect_nodes() //prevent the machine from stopping because of the recipe change and the pipenet not updating
+		update_parents() //prevent the machine from stopping because of the recipe change and the pipenet not updating
 		moles_calculations()
 		return
 
@@ -44,7 +43,7 @@
 		filter_types.Cut()
 		for(var/gas_type in resolved_value)
 			filter_types += gas_type
-		reconnect_nodes()
+		atmos_conditions_changed()
 
 		return
 
