@@ -72,6 +72,7 @@
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
+	charge = total_charge()
 	. += NAMEOF(src, charge)
 	. += NAMEOF(src, input_level)
 	. += NAMEOF(src, output_level)
