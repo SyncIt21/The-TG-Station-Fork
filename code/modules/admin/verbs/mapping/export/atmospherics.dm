@@ -79,12 +79,10 @@
 
 /obj/machinery/atmospherics/components/unary/outlet_injector/get_save_vars()
 	. = ..()
-	. += NAMEOF(src, id_tag)
 	. += NAMEOF(src, volume_rate)
 
 /obj/machinery/atmospherics/components/unary/vent_pump/get_save_vars()
 	. = ..()
-	. += NAMEOF(src, id_tag)
 	. += NAMEOF(src, chamber_id)
 	. += NAMEOF(src, pump_direction)
 	. += NAMEOF(src, pressure_checks)

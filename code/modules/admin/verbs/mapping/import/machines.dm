@@ -229,6 +229,26 @@
 	..()
 
 /obj/machinery/airalarm/restore_saved_value(attribute, resolved_value)
+	if(attribute == "tlv")
+		var/list/tlv_list = resolved_value
+		for(var/tlv_key in tlv_list)
+			var/datum/tlv/setting = tlv_collection[tlv_key]
+
+			var/list/data = splittext(tlv_list[tlv_key], "/")
+			setting.warning_min = text2num(data[1])
+			setting.warning_max = text2num(data[2])
+			setting.hazard_min = text2num(data[3])
+			setting.hazard_max = text2num(data[4])
+
+		update_appearance()
+
+		return
+
+	if(attribute == "selected_mode")
+		select_mode(src, resolved_value, TRUE)
+
+		return
+
 	if(attribute == "air_sensor")
 		air_sensor_chamber_id = resolved_value
 

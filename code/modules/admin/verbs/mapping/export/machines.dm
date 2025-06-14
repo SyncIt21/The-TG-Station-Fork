@@ -94,6 +94,21 @@
 /obj/machinery/airalarm/get_save_vars()
 	. = ..()
 	. -= NAMEOF(src, name)
+	. -= NAMEOF(src, contents)
+	. += NAMEOF(src, buildstage)
+
+	var/list/tlv_data = list("tlv" = list())
+	for(var/key in tlv_collection)
+		var/datum/tlv/data = tlv_collection[key]
+		tlv_data["tlv"][key] = "[data.warning_min]/[data.warning_max]/[data.hazard_min]/[data.hazard_max]"
+	. += list(tlv_data)
+
+	. += NAMEOF(src, danger_level)
+	. += list(list("selected_mode" = selected_mode.type))
+
+	. += NAMEOF(src, allow_link_change)
+	if(length(air_sensor_chamber_id))
+		. += list(list("air_sensor" = air_sensor_chamber_id))
 
 /obj/machinery/door/poddoor/get_save_vars()
 	. = ..()
@@ -158,14 +173,3 @@
 
 	if(!QDELETED(board))
 		. += NAMEOF(src, board)
-
-/obj/machinery/airalarm/get_save_vars()
-	. = ..()
-
-	. += NAMEOF(src, allow_link_change)
-	if(length(air_sensor_chamber_id))
-		. += list(list("air_sensor" = air_sensor_chamber_id))
-
-/obj/machinery/air_sensor/get_save_vars()
-	. = ..()
-	. += NAMEOF(src, id_tag)
