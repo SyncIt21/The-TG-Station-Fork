@@ -146,7 +146,9 @@ GLOBAL_LIST_EMPTY(roundstart_station_closets)
 	// if closed, any item at the crate's loc is put in the contents
 	. = INITIALIZE_HINT_LATELOAD
 
-	populate_contents_immediate()
+	//when saved via map export we only initialize if the exporter didn't save our stuff
+	if(!contents_initialized)
+		populate_contents_immediate()
 	var/static/list/loc_connections = list(
 		COMSIG_LIVING_DISARM_COLLIDE = PROC_REF(locker_living),
 		COMSIG_ATOM_MAGICALLY_UNLOCKED = PROC_REF(on_magic_unlock),

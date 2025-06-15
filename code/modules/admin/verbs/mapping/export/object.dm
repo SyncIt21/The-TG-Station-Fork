@@ -25,6 +25,10 @@
 	. += NAMEOF(src, shuttle_id)
 	. += NAMEOF(src, width)
 
+/obj/item/storage/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, init_storage)
+
 /obj/item/pipe/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, piping_layer)

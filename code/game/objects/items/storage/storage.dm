@@ -8,6 +8,8 @@
 	/// BE CAREFUL, THERE'S SOME REALLY NASTY SHIT IN THIS TYPEPATH
 	/// SANTA IS EVIL
 	var/preload = FALSE
+	///Should we initialize our storage
+	var/init_storage = TRUE
 	/// What storage type to use for this item
 	var/datum/storage/storage_type = /datum/storage
 
@@ -16,10 +18,13 @@
 
 	create_storage(storage_type = storage_type)
 
-	PopulateContents()
+	if(init_storage)
+		PopulateContents()
 
-	for (var/obj/item/item in src)
-		item.item_flags |= IN_STORAGE
+		for (var/obj/item/item in src)
+			item.item_flags |= IN_STORAGE
+
+		init_storage = FALSE
 
 /obj/item/storage/create_storage(
 	max_slots,
