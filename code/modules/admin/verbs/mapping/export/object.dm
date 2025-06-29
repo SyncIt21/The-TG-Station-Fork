@@ -1,3 +1,4 @@
+#define REF_ATTRIBUTE(prefix, value)(list(list("[prefix][replacetext(replacetext(REF(value), "\[", ""), "\]", "")]" = value)))
 
 /obj/get_save_vars()
 	. = ..()
@@ -42,7 +43,6 @@
 	. = ..()
 	. += NAMEOF(src, charge)
 	. += NAMEOF(src, rigged)
-	return .
 
 /obj/item/photo/get_save_vars()
 	. = ..()
@@ -66,3 +66,111 @@
 		stored_files["stored_files"] += "[program.type]"
 	if(length(stored_files["stored_files"]))
 		. += list(stored_files)
+
+/obj/item/rwd/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, current_amount)
+	. += NAMEOF(src, cable_layer)
+	if(!QDELETED(cable))
+		. += list(list("cable_coil" = cable.amount))
+
+/obj/item/construction/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, matter)
+	. += NAMEOF(src, construction_upgrades)
+
+/obj/item/construction/rcd/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, root_category)
+	. += NAMEOF(src, design_category)
+	. += NAMEOF(src, rcd_design_path)
+	. += NAMEOF(src, design_title)
+	. += NAMEOF(src, mode)
+	. += NAMEOF(src, construction_mode)
+
+/obj/item/construction/rtd/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, root_category)
+	. += NAMEOF(src, design_category)
+	. += NAMEOF(src, selected_direction)
+
+/obj/item/construction/rld/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, color_choice)
+	. += NAMEOF(src, mode)
+
+/obj/item/pipe_dispenser/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, p_dir)
+	. += NAMEOF(src, p_init_dir)
+	. += NAMEOF(src, p_flipped)
+	. += NAMEOF(src, paint_color)
+	. += NAMEOF(src, category)
+	. += NAMEOF(src, pipe_layers)
+	. += NAMEOF(src, multi_layer)
+	. += NAMEOF(src, upgrade_flags)
+
+/obj/item/mod/core/standard/get_save_vars()
+	. = ..()
+	if(!QDELETED(cell))
+		. += NAMEOF(src, cell)
+
+/obj/item/mod/module/anomaly_locked/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, core)
+
+/obj/item/mod/control/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, core)
+	. += NAMEOF(src, theme)
+	. -= NAMEOF(src, contents)
+
+	for(var/obj/item/mod/module/installed in contents)
+		. += REF_ATTRIBUTE("module", installed)
+
+/obj/item/gun/energy/recharge/kinetic_accelerator/get_save_vars()
+	. = ..()
+
+	for(var/obj/item/borg/upgrade/modkit/installed in modkits)
+		. += REF_ATTRIBUTE("modkit", installed)
+
+/obj/item/gun/energy/get_save_vars()
+	. = ..()
+
+	cell_type = null
+	. += NAMEOF(src, cell_type)
+	. += NAMEOF(src, cell)
+
+/obj/item/tank/get_save_vars()
+	. = ..()
+	if(air_contents)
+		. += list(list("air" = air_contents.to_string()))
+
+/obj/item/transfer_valve/get_save_vars()
+	. = ..()
+	if(!QDELETED(tank_one))
+		. += NAMEOF(src, tank_one)
+	if(!QDELETED(tank_two))
+		. += NAMEOF(src, tank_two)
+	if(!QDELETED(attached_device))
+		. += NAMEOF(src, attached_device)
+
+/obj/item/disk/tech_disk/get_save_vars()
+	. = ..()
+
+	if(stored_research.researched_nodes.len)
+		. += list(list("researched_nodes" = stored_research.researched_nodes))
+
+	if(stored_research.visible_nodes.len)
+		. += list(list("visible_nodes" = stored_research.visible_nodes))
+
+	if(stored_research.available_nodes.len)
+		. += list(list("available_nodes" = stored_research.available_nodes))
+
+	if(stored_research.researched_designs.len)
+		. += list(list("researched_designs" = stored_research.researched_designs))
+
+	if(stored_research.hidden_nodes.len)
+		. += list(list("hidden_nodes" = stored_research.hidden_nodes))
+
+#undef REF_ATTRIBUTE

@@ -131,6 +131,12 @@
 	. = ..()
 	. += NAMEOF(src, id)
 
+	if(!QDELETED(device))
+		. += NAMEOF(src, device)
+
+	if(!QDELETED(board))
+		. += NAMEOF(src, board)
+
 /obj/machinery/modular_computer/get_save_vars()
 	. = ..()
 
@@ -164,12 +170,11 @@
 	. += NAMEOF(src, deconstruction)
 	. += NAMEOF(src, id)
 
-/obj/machinery/button/get_save_vars()
+/obj/machinery/cell_charger/get_save_vars()
 	. = ..()
-	. += NAMEOF(src, id)
+	. += NAMEOF(src, charge_rate)
+	. += NAMEOF(src, charging)
 
-	if(!QDELETED(device))
-		. += NAMEOF(src, device)
-
-	if(!QDELETED(board))
-		. += NAMEOF(src, board)
+/obj/machinery/research/anomaly_refinery/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, implosions_left)

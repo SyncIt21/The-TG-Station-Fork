@@ -24,3 +24,87 @@
 		return
 
 	..()
+
+/obj/item/rwd/restore_saved_value(attribute, resolved_value)
+	if(attribute == "cable_coil")
+		cable = new (src, resolved_value)
+
+		return
+
+	..()
+
+/obj/item/mod/module/storage/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		atom_storage.set_locked(STORAGE_NOT_LOCKED)
+
+		..()
+
+		atom_storage.set_locked(STORAGE_FULLY_LOCKED)
+
+		return
+
+	..()
+
+/obj/item/mod/control/restore_saved_value(attribute, resolved_value)
+	if(attribute == "core")
+		for(var/obj/item/mod/module/installed in contents)
+			uninstall(installed)
+			qdel(installed)
+
+		var/obj/item/mod/core/resolved_core = resolved_value
+		resolved_core.install(src)
+
+		return
+
+	if(findtext(attribute, "module"))
+		install(resolved_value)
+
+		return
+
+	..()
+
+/obj/item/gun/energy/recharge/kinetic_accelerator/restore_saved_value(attribute, resolved_value)
+	if(findtext(attribute, "modkit"))
+		var/obj/item/borg/upgrade/modkit/mod = resolved_value
+
+		mod.install(src, usr)
+
+		return
+
+	..()
+
+/obj/item/tank/restore_saved_value(attribute, resolved_value)
+	if(attribute == "air")
+		air_contents.merge(SSair.parse_gas_string(resolved_value))
+
+		return
+
+	..()
+
+/obj/item/disk/tech_disk/restore_saved_value(attribute, resolved_value)
+	if(attribute == "researched_nodes")
+		stored_research.researched_nodes += resolved_value
+
+		return
+
+	if(attribute == "visible_nodes")
+		stored_research.visible_nodes += resolved_value
+
+		return
+
+	if(attribute == "available_nodes")
+		stored_research.available_nodes += resolved_value
+
+		return
+
+	if(attribute == "researched_designs")
+		stored_research.researched_designs += resolved_value
+
+		return
+
+	if(attribute == "hidden_nodes")
+		stored_research.hidden_nodes += resolved_value
+
+		return
+
+	..()

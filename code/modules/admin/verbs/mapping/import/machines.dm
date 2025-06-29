@@ -257,3 +257,17 @@
 		return
 
 	..()
+
+/obj/machinery/research/anomaly_refinery/restore_saved_value(attribute, resolved_value)
+	if(attribute == "contents")
+		..()
+
+		for(var/obj/item/thing in contents)
+			if(istype(thing, /obj/item/raw_anomaly_core))
+				inserted_core = thing
+			else if(istype(thing, inserted_bomb))
+				inserted_bomb = thing
+
+		return
+
+	..()

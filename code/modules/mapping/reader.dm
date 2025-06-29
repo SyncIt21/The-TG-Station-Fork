@@ -108,7 +108,7 @@
 	/// Matches key formats in TMG (IE: newline after the \()
 	var/static/regex/matches_tgm = new(@'^"[A-z]*"[\s]*=[\s]*\([\s]*\n', "m")
 	/// Pulls out key value pairs for TGM
-	var/static/regex/var_edits_tgm = new(@'^\t(#?[A-z]*) = (.*?);?$')
+	var/static/regex/var_edits_tgm = new(@'^\t(#?[A-z0-9]*) = (.*?);?$')
 	/// Pulls out model paths for DMM
 	var/static/regex/model_path = new(@'(\/[^\{]*?(?:\{.*?\})?)(?:,|$)', "g")
 
@@ -1090,8 +1090,8 @@ GLOBAL_LIST_EMPTY(map_model_default)
 					if(attribute[1] == "#")
 						attribute = copytext(attribute, 2)
 						resolved_value = value
-					else if(istext(value))
-						resolved_value = atom_refs[value]
+					if(istext(value))
+						resolved_value = atom_refs[value] || value
 					if(!resolved_value)
 						continue
 					resolved_members += list(list(attribute, resolved_value))

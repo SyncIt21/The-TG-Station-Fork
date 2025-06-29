@@ -38,7 +38,7 @@
 	var/reaction_increment = 0
 
 	///number of ttv explosion tests before the servo gets fired & needs to be replaced
-	var/implosions_left=2
+	var/implosions_left = 2
 
 /obj/machinery/research/anomaly_refinery/Initialize(mapload)
 	. = ..()

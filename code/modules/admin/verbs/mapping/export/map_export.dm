@@ -108,6 +108,9 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 		local_refs[ref] = global_refs[ref] = value
 		//return ref
 		return ref
+	if(isdatum(value))
+		var/datum/thing = value
+		return "[thing.type]"
 	// not handled:
 	// - pops: /obj{name="foo"}
 	// - new(), newlist(), icon(), matrix(), sound()
