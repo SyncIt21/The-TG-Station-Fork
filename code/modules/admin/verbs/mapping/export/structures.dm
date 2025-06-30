@@ -28,3 +28,8 @@
 	. += NAMEOF(src, finished)
 	. += NAMEOF(src, can_rotate)
 	. += NAMEOF(src, rotation_angle)
+
+/obj/structure/ore_vent/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, tapped)
+	. += NAMEOF(src, discovered)

@@ -47,6 +47,10 @@
 
 /obj/item/mod/control/restore_saved_value(attribute, resolved_value)
 	if(attribute == "core")
+		if(!QDELETED(core))
+			core.uninstall()
+			qdel(core)
+
 		for(var/obj/item/mod/module/installed in contents)
 			uninstall(installed)
 			qdel(installed)

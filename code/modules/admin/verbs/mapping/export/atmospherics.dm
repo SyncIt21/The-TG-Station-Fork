@@ -11,11 +11,34 @@
 	. += NAMEOF(src, release_pressure)
 	. -= NAMEOF(src, contents)
 
+/obj/machinery/computer/atmos_control/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, atmos_chambers)
+
+	. += NAMEOF(src, was_multi_tooled)
+	if(was_multi_tooled)
+		var/list/sensor_coords = list()
+		for(var/sensor_id in connected_sensors)
+			var/obj/machinery/air_sensor/sensor = GLOB.objects_by_id_tag[connected_sensors[sensor_id] || ""]
+			if(!QDELETED(sensor))
+				var/turf/sensor_turf = get_turf(sensor)
+				sensor_coords[sensor_id] = "[sensor_turf.x]%[sensor_turf.y]%[sensor_turf.z]"
+		if(sensor_coords.len)
+			. += list(list("sensor_coords" = sensor_coords))
+
 /obj/machinery/air_sensor/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, chamber_id)
-	. += NAMEOF(src, inlet_id)
-	. += NAMEOF(src, outlet_id)
+
+	var/obj/machinery/atmospherics/components/unary/outlet_injector/inlet = GLOB.objects_by_id_tag[inlet_id || ""]
+	if(istype(inlet) && !QDELETED(inlet))
+		var/turf/inlet_turf = get_turf(inlet)
+		. += list(list("inlet_coords" = list(inlet_turf.x, inlet_turf.y, inlet_turf.z)))
+
+	var/obj/machinery/atmospherics/components/unary/vent_pump/outlet = GLOB.objects_by_id_tag[outlet_id || ""]
+	if(istype(outlet) && !QDELETED(outlet))
+		var/turf/outlet_turf = get_turf(outlet)
+		. += list(list("outlet_coords" = list(outlet_turf.x, outlet_turf.y, outlet_turf.z)))
 
 /obj/machinery/atmospherics/get_save_vars()
 	. = ..()
