@@ -48,6 +48,18 @@
 	. = ..()
 	. -= NAMEOF(src, icon)
 
+/obj/item/card/id/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, registered_name)
+
+	if(registered_account)
+		. += list(list("data" = list(
+			"job" = registered_account.account_job.type,
+			"balance" = registered_account.account_balance,
+			"mining" = registered_account.mining_points,
+			"bitrunning" = registered_account.bitrunning_points
+		)))
+
 /obj/item/modular_computer/get_save_vars()
 	. = ..()
 
@@ -57,6 +69,10 @@
 	//store power source
 	if(!QDELETED(internal_cell))
 		. += NAMEOF(src, internal_cell)
+
+	//stored id slot
+	if(!QDELETED(omputer_id_slot))
+		. += NAMEOF(src, computer_id_slot)
 
 	//store all programs that don't load up on default
 	var/list/stored_files = list("stored_files" = list())
@@ -159,18 +175,18 @@
 	. = ..()
 
 	if(stored_research.researched_nodes.len)
-		. += list(list("researched_nodes" = stored_research.researched_nodes))
+		. += NAMEOF(src, stored_research.researched_nodes)
 
 	if(stored_research.visible_nodes.len)
-		. += list(list("visible_nodes" = stored_research.visible_nodes))
+		. += NAMEOF(src, stored_research.visible_nodes)
 
 	if(stored_research.available_nodes.len)
-		. += list(list("available_nodes" = stored_research.available_nodes))
+		. += NAMEOF(src, stored_research.available_nodes)
 
 	if(stored_research.researched_designs.len)
-		. += list(list("researched_designs" = stored_research.researched_designs))
+		. += NAMEOF(src, stored_research.researched_designs)
 
 	if(stored_research.hidden_nodes.len)
-		. += list(list("hidden_nodes" = stored_research.hidden_nodes))
+		. += NAMEOF(src, stored_research.hidden_nodes)
 
 #undef REF_ATTRIBUTE

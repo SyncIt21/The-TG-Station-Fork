@@ -85,29 +85,14 @@
 
 	..()
 
-/obj/item/disk/tech_disk/restore_saved_value(attribute, resolved_value)
-	if(attribute == "researched_nodes")
-		stored_research.researched_nodes += resolved_value
+/obj/item/card/id/restore_saved_value(attribute, resolved_value)
+	if(attribute == "data")
+		var/list/data = resolved_value
 
-		return
-
-	if(attribute == "visible_nodes")
-		stored_research.visible_nodes += resolved_value
-
-		return
-
-	if(attribute == "available_nodes")
-		stored_research.available_nodes += resolved_value
-
-		return
-
-	if(attribute == "researched_designs")
-		stored_research.researched_designs += resolved_value
-
-		return
-
-	if(attribute == "hidden_nodes")
-		stored_research.hidden_nodes += resolved_value
+		registered_account.account_job = SSjob.get_job_type(data[1])
+		registered_account.account_balance = text2num(data[2])
+		registered_account.mining_points = text2num(data[3])
+		registered_account.bitrunning_points = text2num(data[4])
 
 		return
 

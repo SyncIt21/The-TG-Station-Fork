@@ -124,8 +124,7 @@
 
 /obj/machinery/door/airlock/get_save_vars()
 	. = ..()
-	. -= NAMEOF(src, icon_state) // airlocks ignore icon_state and instead use get_airlock_overlay()
-	// TODO save the wire data but need to include states for cute wires, signalers attached to wires, etc.
+	. -= NAMEOF(src, icon_state)
 
 /obj/machinery/button/get_save_vars()
 	. = ..()
