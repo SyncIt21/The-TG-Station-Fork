@@ -54,10 +54,10 @@
 
 	if(registered_account)
 		. += list(list("data" = list(
-			"job" = registered_account.account_job.type,
-			"balance" = registered_account.account_balance,
-			"mining" = registered_account.mining_points,
-			"bitrunning" = registered_account.bitrunning_points
+			registered_account.account_job.type,
+			registered_account.account_balance,
+			registered_account.mining_points,
+			registered_account.bitrunning_points
 		)))
 
 /obj/item/modular_computer/get_save_vars()
