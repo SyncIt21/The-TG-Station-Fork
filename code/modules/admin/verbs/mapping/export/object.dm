@@ -71,7 +71,7 @@
 		. += NAMEOF(src, internal_cell)
 
 	//stored id slot
-	if(!QDELETED(omputer_id_slot))
+	if(!QDELETED(computer_id_slot))
 		. += NAMEOF(src, computer_id_slot)
 
 	//store all programs that don't load up on default
