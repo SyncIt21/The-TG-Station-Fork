@@ -51,6 +51,8 @@
 /obj/item/card/id/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, registered_name)
+	. += NAMEOF(src, assignment)
+	. += NAMEOF(src, access)
 
 	if(registered_account)
 		. += list(list("data" = list(
