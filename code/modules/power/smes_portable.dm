@@ -126,24 +126,45 @@
 
 	///Initial charge
 	if(charge)
-		var/charge_adjust = charge
 		for(var/obj/item/stock_parts/power_store/power_cell in component_parts)
-			charge_adjust -= power_cell.give(charge_adjust)
-			if(!charge_adjust)
-				break
+			power_cell.use(power_cell.charge())
+			if(charge)
+				charge -= power_cell.give(charge)
+		charge = 0
+
+	register_context()
 
 /obj/machinery/smesbank/on_construction(mob/user)
-	. = ..()
 	set_anchored(FALSE)
+
+/obj/machinery/smesbank/add_context(atom/source, list/context, obj/item/held_item, mob/user)
+	. = NONE
+	if(isnull(held_item))
+		return
+
+	if(held_item.tool_behaviour == TOOL_WRENCH)
+		context[SCREENTIP_CONTEXT_LMB] = "[connected_port ? "Disconnect" : "Connect"]"
+		return CONTEXTUAL_SCREENTIP_SET
+	if(held_item.tool_behaviour == TOOL_SCREWDRIVER)
+		context[SCREENTIP_CONTEXT_LMB] = "[panel_open ? "Close" : "Open"] Panel"
+		return CONTEXTUAL_SCREENTIP_SET
+	if(held_item.tool_behaviour == TOOL_CROWBAR && panel_open && !connected_port)
+		context[SCREENTIP_CONTEXT_LMB] = "Deconstruct"
+		return CONTEXTUAL_SCREENTIP_SET
+
+/obj/machinery/smesbank/examine(user)
+	. = ..()
+	. += span_notice("its maintenance panel can be [EXAMINE_HINT("screwed")] [panel_open ? "closed" : "open"].")
+	if(connected_port)
+		. += span_notice("You need to [EXAMINE_HINT("unwrench")] from the port before deconstructing.")
+	else
+		if(panel_open)
+			. += span_notice("It can be [EXAMINE_HINT("pried")] apart.")
+		. += span_notice("It should be [EXAMINE_HINT("wrenched")] onto a connector port to operate.")
 
 /obj/machinery/smesbank/Destroy()
 	disconnect_port()
 	return ..()
-
-/obj/machinery/smesbank/examine(user)
-	. = ..()
-	if(!connected_port)
-		. += span_warning("This SMES has no connector port!")
 
 /obj/machinery/smesbank/update_overlays()
 	. = ..()

@@ -20,14 +20,10 @@
 	var/custom_reconcilation = FALSE
 
 /obj/machinery/atmospherics/components/Initialize(mapload)
-	. = ..()
-	update_appearance()
-
-/obj/machinery/atmospherics/components/New()
 	parents = new(device_type)
 	airs = new(device_type)
 
-	..()
+	. = ..()
 
 	for(var/i in 1 to device_type)
 		if(airs[i])
@@ -35,6 +31,8 @@
 		var/datum/gas_mixture/component_mixture = new
 		component_mixture.volume = 200
 		airs[i] = component_mixture
+
+	update_appearance()
 
 // Iconnery
 

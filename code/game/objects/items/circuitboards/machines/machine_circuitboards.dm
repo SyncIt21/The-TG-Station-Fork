@@ -715,6 +715,7 @@
 	build_path = typepath
 	name = "[vending_names_paths[build_path]] Vendor"
 	req_components = list(initial(typepath.refill_canister) = 1)
+	flatpack_components = list(initial(typepath.refill_canister))
 
 /obj/item/circuitboard/machine/vendor/apply_default_parts(obj/machinery/machine)
 	for(var/typepath in vending_names_paths)
@@ -1080,6 +1081,14 @@
 	name = "Slime Processor"
 	greyscale_colors = CIRCUIT_COLOR_SCIENCE
 	build_path = /obj/machinery/processor/slime
+
+/obj/item/circuitboard/machine/processor/slime/fullupgrade
+	build_path = /obj/machinery/processor/slime/fullupgrade
+	specific_parts = TRUE
+	req_components = list(
+		/datum/stock_part/matter_bin/tier4 = 1,
+		/datum/stock_part/servo/tier4 = 1,
+	)
 
 /obj/item/circuitboard/machine/protolathe/department/science
 	name = "Departmental Protolathe - Science"
