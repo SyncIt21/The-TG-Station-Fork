@@ -59,26 +59,6 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 			index = findtext(text, char, index + length(char))
 	return text
 
-/**
- * A procedure for saving non-standard properties of an object.
- * For example, saving ore into a silo, and further spavn by coordinates of metal stacks objects
- */
-/obj/proc/on_object_saved()
-	return null
-
-// Save resources in silo
-/obj/machinery/ore_silo/on_object_saved()
-	var/data
-	var/datum/component/material_container/material_holder = GetComponent(/datum/component/material_container)
-	for(var/each in material_holder.materials)
-		var/amount = material_holder.materials[each] / 100
-		var/datum/material/material_datum = each
-		while(amount > 0)
-			var/amount_in_stack = max(1, min(50, amount))
-			amount -= amount_in_stack
-			data += "[data ? ",\n" : ""][material_datum.sheet_type]{\n\tamount = [amount_in_stack]\n\t}"
-	return data
-
 /**Map exporter
 * Inputting a list of turfs into convert_map_to_tgm() will output a string
 * with the turfs and their objects / areas on said turf into the TGM mapping format
