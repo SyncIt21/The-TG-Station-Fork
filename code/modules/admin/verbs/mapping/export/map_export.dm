@@ -61,10 +61,7 @@ ADMIN_VERB(map_export, R_DEBUG, "Map Export", "Select a part of the map by coord
 
 /**
  * A procedure for saving non-standard properties of an object.
- * Examples:
- * Saving material stacks (ie. ore in a silo)
- * Saving variables that can be shown as mapping helpers (ie. welded airlock mapping helper)
- * Saving objects inside of another object (ie. paper inside a noticeboard)
+ * For example, saving ore into a silo, and further spavn by coordinates of metal stacks objects
  */
 /obj/proc/on_object_saved()
 	return null
