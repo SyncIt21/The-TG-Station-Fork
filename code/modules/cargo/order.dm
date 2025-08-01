@@ -157,7 +157,6 @@
 				if(!container_contents[missing_item]) // To avoid 0s and negative values on the manifest
 					container_contents -= missing_item
 
-
 	for(var/item in container_contents)
 		manifest_text += "<li> [container_contents[item]] [item][container_contents[item] == 1 ? "" : "s"]</li>"
 	manifest_text += "</ul>"
@@ -173,16 +172,13 @@
 			while(--lost >= 0)
 				qdel(pick(container.contents))
 
-
 	manifest_paper.update_appearance()
 	manifest_paper.forceMove(container)
 
 	if(istype(container, /obj/structure/closet/crate))
-		var/obj/structure/closet/crate/C = container
-		C.manifest = manifest_paper
-		C.update_appearance()
-	else
-		container.contents += manifest_paper
+		var/obj/structure/closet/crate/crate = container
+		crate.manifest = WEAKREF(manifest_paper)
+		crate.update_appearance()
 
 	return manifest_paper
 
@@ -217,15 +213,11 @@
 	pack.cost += cost_increase
 
 /// Custom type of order who's supply pack can be safely deleted
-/datum/supply_order/disposable
-
 /datum/supply_order/disposable/Destroy(force)
 	QDEL_NULL(pack)
 	return ..()
 
 /// Custom material order to append cargo crate value to the final order cost
-/datum/supply_order/disposable/materials
-
 /datum/supply_order/disposable/materials/get_final_cost()
 	return (..() + CARGO_CRATE_VALUE)
 
