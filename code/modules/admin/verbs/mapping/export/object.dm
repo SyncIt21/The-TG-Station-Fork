@@ -177,18 +177,18 @@
 	. = ..()
 
 	if(stored_research.researched_nodes.len)
-		. += NAMEOF(src, stored_research.researched_nodes)
+		. += list(list("researched_nodes" = stored_research.researched_nodes))
 
 	if(stored_research.visible_nodes.len)
-		. += NAMEOF(src, stored_research.visible_nodes)
+		. += list(list("visible_nodes" = stored_research.visible_nodes))
 
 	if(stored_research.available_nodes.len)
-		. += NAMEOF(src, stored_research.available_nodes)
+		. += list(list("available_nodes" = stored_research.available_nodes))
 
 	if(stored_research.researched_designs.len)
-		. += NAMEOF(src, stored_research.researched_designs)
+		. += list(list("researched_designs" = stored_research.researched_designs))
 
 	if(stored_research.hidden_nodes.len)
-		. += NAMEOF(src, stored_research.hidden_nodes)
+		. += list(list("hidden_nodes" = stored_research.hidden_nodes))
 
 #undef REF_ATTRIBUTE
