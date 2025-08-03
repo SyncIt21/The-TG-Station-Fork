@@ -100,26 +100,36 @@
 
 /obj/item/disk/tech_disk/restore_saved_value(attribute, resolved_value)
 	if(attribute == "researched_nodes")
+		stored_research.researched_nodes.Cut()
+
 		stored_research.researched_nodes += resolved_value
 
 		return
 
 	if(attribute == "visible_nodes")
+		stored_research.visible_nodes.Cut()
+
 		stored_research.visible_nodes += resolved_value
 
 		return
 
 	if(attribute == "available_nodes")
+		stored_research.available_nodes.Cut()
+
 		stored_research.available_nodes += resolved_value
 
 		return
 
 	if(attribute == "researched_designs")
+		stored_research.researched_designs.Cut()
+
 		stored_research.researched_designs += resolved_value
 
 		return
 
 	if(attribute == "hidden_nodes")
+		stored_research.hidden_nodes.Cut()
+
 		stored_research.hidden_nodes += resolved_value
 
 		return
