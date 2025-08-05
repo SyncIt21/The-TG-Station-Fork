@@ -198,3 +198,7 @@
 	. += NAMEOF(src, points_held)
 	if(QDELETED(silo_materials.silo))
 		. += list(list("local_container" = SSmaterials.to_list(silo_materials.mat_container)))
+
+/obj/machinery/firealarm/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, buildstage)
