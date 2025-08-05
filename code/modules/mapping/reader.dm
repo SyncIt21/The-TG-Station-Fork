@@ -1004,20 +1004,19 @@ GLOBAL_LIST_EMPTY(map_model_default)
 
 		//find member attributes that references another atom. we retain them to replace with their pointed value
 		if(atom_member_attributes.len)
-			retained_ref_attributes = popkey(atom_member_attributes, REF_ATTRIBUTES)
+			retained_ref_attributes = atom_member_attributes[REF_ATTRIBUTES]
 			has_ref_attributes = length(retained_ref_attributes)
 			if(has_ref_attributes)
 				obj_ref_id = retained_ref_attributes[OBJ_REF_ID]
-				if(obj_ref_id)
-					retained_ref_attributes -= OBJ_REF_ID
-					has_ref_attributes = retained_ref_attributes.len
 
 		// setup preloader
 		if(members_attributes[index] != default_list)
 			var/list/final_member_attributes = atom_member_attributes
 			if(has_ref_attributes) //ref attributes are loaded differently so filter them out
+				final_member_attributes = final_member_attributes.Copy()
 				for(var/ref_attribute in retained_ref_attributes)
 					final_member_attributes -= ref_attribute
+				final_member_attributes -= REF_ATTRIBUTES
 
 			world.preloader_setup(final_member_attributes , members[index])
 
@@ -1054,7 +1053,9 @@ GLOBAL_LIST_EMPTY(map_model_default)
 			var/list/atoms = atom_refs[NULL_REF_ID]
 			if(!atoms)
 				atoms = list()
-			atoms += list(list(instance, retained_ref_attributes))
+			var/list/atom_ref_attributes = retained_ref_attributes.Copy()
+			atom_ref_attributes -= OBJ_REF_ID
+			atoms += list(list(instance, atom_ref_attributes))
 			atom_refs[NULL_REF_ID] = atoms
 
 		//second preloader pass, for those atoms that don't ..() in New()
@@ -1146,7 +1147,7 @@ GLOBAL_LIST_EMPTY(map_model_default)
 		var/left_constant = parse_constant(trim_left)
 		if(position)
 			old_position = position + length(text[position])
-		if(!left_constant) // damn newlines man. Exists to provide behavior consistency with the above loop. not a major cost becuase this path is cold
+		if(!trim_left) // damn newlines man. Exists to provide behavior consistency with the above loop. not a major cost becuase this path is cold
 			continue
 
 		if(equal_position && !isnum(left_constant))

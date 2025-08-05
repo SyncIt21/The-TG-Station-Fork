@@ -3148,6 +3148,7 @@
 #include "code\modules\admin\verbs\mapping\import\machines.dm"
 #include "code\modules\admin\verbs\mapping\import\map_template_loadverb.dm"
 #include "code\modules\admin\verbs\mapping\import\objects.dm"
+#include "code\modules\admin\verbs\mapping\import\structures.dm"
 #include "code\modules\admin\verbs\SDQL2\SDQL_2.dm"
 #include "code\modules\admin\verbs\SDQL2\SDQL_2_parser.dm"
 #include "code\modules\admin\verbs\SDQL2\SDQL_2_wrappers.dm"

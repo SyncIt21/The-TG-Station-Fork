@@ -191,4 +191,22 @@
 	if(stored_research.hidden_nodes.len)
 		. += list(list("hidden_nodes" = stored_research.hidden_nodes))
 
+/obj/item/assembly/control/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, id)
+	. += NAMEOF(src, sync_doors)
+
+/obj/item/holosign_creator/get_save_vars()
+	. = ..()
+
+	var/list/turf_data = list()
+	for(var/obj/structure/holosign/hologram as anything in signs)
+		var/turf/holo_turf = get_turf(hologram)
+		turf_data += "[holo_turf.x]$[holo_turf.y]$[holo_turf.z]"
+	. += list(list("signs" = turf_data))
+
+/obj/item/boulder/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, durability)
+
 #undef REF_ATTRIBUTE

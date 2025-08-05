@@ -33,3 +33,18 @@
 	. = ..()
 	. += NAMEOF(src, tapped)
 	. += NAMEOF(src, discovered)
+
+/obj/structure/frame/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, state)
+
+/obj/structure/frame/machine/get_save_vars()
+	. = ..()
+	if(!QDELETED(circuit))
+		. += NAMEOF(src, req_components)
+		. += NAMEOF(src, contents)
+
+/obj/structure/frame/computer/get_save_vars()
+	. = ..()
+	if(!QDELETED(circuit))
+		. += NAMEOF(src, circuit)

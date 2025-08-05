@@ -16,24 +16,23 @@
 	//export everything else
 	. += NAMEOF(src, contents)
 
+/obj/machinery/conveyor_switch/get_save_vars()
+	. = ..()
+	if(position != 0)
+		. += list(list("position" = position))
+	. += NAMEOF(src, oneway)
+	. += NAMEOF(src, invert_icon)
+	. += NAMEOF(src, id)
+	. += NAMEOF(src, conveyor_speed)
+
+/obj/machinery/conveyor/get_save_vars()
+	. = ..()
+	. += list(list("id" = id))
+
 /obj/machinery/ore_silo/get_save_vars()
 	. = ..()
 
 	. += list(list("materials" = SSmaterials.to_list(materials)))
-
-/obj/machinery/chem_master/get_save_vars()
-	. = ..()
-
-	. += NAMEOF(src, beaker)
-
-/obj/machinery/chem_heater/get_save_vars()
-	. = ..()
-
-	. += NAMEOF(src, target_temperature)
-	. += NAMEOF(src, heater_coefficient)
-	. += NAMEOF(src, on)
-	. += NAMEOF(src, dispense_volume)
-	. += NAMEOF(src, beaker)
 
 /obj/machinery/autolathe/get_save_vars()
 	. = ..()
@@ -69,6 +68,19 @@
 
 	if(QDELETED(materials.silo))
 		. += list(list("local_container" = SSmaterials.to_list(materials.mat_container)))
+
+/obj/machinery/chem_master/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, beaker)
+
+/obj/machinery/chem_heater/get_save_vars()
+	. = ..()
+
+	. += NAMEOF(src, target_temperature)
+	. += NAMEOF(src, heater_coefficient)
+	. += NAMEOF(src, on)
+	. += NAMEOF(src, dispense_volume)
+	. += NAMEOF(src, beaker)
 
 /obj/machinery/power/smes/get_save_vars()
 	. = ..()
@@ -153,7 +165,6 @@
 
 /obj/machinery/power/emitter/get_save_vars()
 	. = ..()
-	. += NAMEOF(src, active)
 	. += NAMEOF(src, welded)
 	. += NAMEOF(src, locked)
 
@@ -177,3 +188,13 @@
 /obj/machinery/research/anomaly_refinery/get_save_vars()
 	. = ..()
 	. += NAMEOF(src, implosions_left)
+
+/obj/machinery/brm/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, toggled_on)
+
+/obj/machinery/bouldertech/get_save_vars()
+	. = ..()
+	. += NAMEOF(src, points_held)
+	if(QDELETED(silo_materials.silo))
+		. += list(list("local_container" = SSmaterials.to_list(silo_materials.mat_container)))

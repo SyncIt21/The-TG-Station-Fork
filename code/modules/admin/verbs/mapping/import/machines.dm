@@ -73,16 +73,16 @@
 
 	..()
 
-/obj/machinery/autolathe/restore_saved_value(attribute, resolved_value)
-	if(attribute == "local_container")
+/obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
+	if(attribute == "materials")
 		SSmaterials.set_list(materials, resolved_value)
 
 		return
 
 	..()
 
-/obj/machinery/ore_silo/restore_saved_value(attribute, resolved_value)
-	if(attribute == "materials")
+/obj/machinery/autolathe/restore_saved_value(attribute, resolved_value)
+	if(attribute == "local_container")
 		SSmaterials.set_list(materials, resolved_value)
 
 		return
@@ -119,7 +119,6 @@
 		return
 
 	..()
-
 
 /obj/machinery/bouldertech/restore_saved_value(attribute, resolved_value)
 	if(attribute == "local_container")
@@ -267,6 +266,21 @@
 				inserted_core = thing
 			else if(istype(thing, inserted_bomb))
 				inserted_bomb = thing
+
+		return
+
+	..()
+
+/obj/machinery/conveyor_switch/restore_saved_value(attribute, resolved_value)
+	if(attribute == "position")
+		addtimer(CALLBACK(src, PROC_REF(on_user_activation), usr, resolved_value), 1 SECONDS)
+		return
+
+	..()
+
+/obj/machinery/conveyor/restore_saved_value(attribute, resolved_value)
+	if(attribute == "id")
+		LAZYADD(GLOB.conveyors_by_id[resolved_value], src)
 
 		return
 

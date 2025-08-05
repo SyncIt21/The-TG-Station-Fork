@@ -1,5 +1,9 @@
 /obj/machinery/portable_atmospherics/get_save_vars()
 	. = ..()
+	. -= NAMEOF(src, anchored)
+	if(anchored)
+		. += list(list("anchored" = anchored))
+
 	var/datum/gas_mixture/gasmix = return_air()
 	if(gasmix)
 		initial_gas_mix = gasmix.to_string()
@@ -60,12 +64,6 @@
 	if(selected_recipe)
 		. += list(list("recipe" = selected_recipe.id))
 	. += NAMEOF(src, gas_input)
-
-/obj/machinery/atmospherics/components/trinary/mixer/get_save_vars()
-	. = ..()
-	. += NAMEOF(src, target_pressure)
-	. += NAMEOF(src, node1_concentration)
-	. += NAMEOF(src, node2_concentration)
 
 /obj/machinery/atmospherics/components/binary/pump/get_save_vars()
 	. = ..()

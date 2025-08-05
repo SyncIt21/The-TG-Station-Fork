@@ -45,14 +45,16 @@
 	initial_gas_mix = turf_gasmix.to_string()
 	. += NAMEOF(src, initial_gas_mix)
 
+	var/list/atoms_above = list()
 	for(var/atom/movable/thing in contents)
 		///We don't deal with atoms that don't go under a tile
 		if(!HAS_TRAIT(thing, TRAIT_UNDERTILE))
 			continue
 		///If we have atoms that are meant to be on top of the tile
 		if(!HAS_TRAIT(thing, TRAIT_UNDERFLOOR))
-			. += list(list("show_on_top" = TRUE))
-			return
+			atoms_above += thing.name
+	if(atoms_above.len)
+		. += list(list("atoms_above" = atoms_above))
 
 /mob/living/basic/dark_wizard/get_save_vars()
 	. = ..()

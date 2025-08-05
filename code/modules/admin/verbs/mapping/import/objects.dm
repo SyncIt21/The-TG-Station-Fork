@@ -90,9 +90,9 @@
 		var/list/data = resolved_value
 
 		registered_account.account_job = SSjob.get_job_type(data[1])
-		registered_account.account_balance = text2num(data[2])
-		registered_account.mining_points = text2num(data[3])
-		registered_account.bitrunning_points = text2num(data[4])
+		registered_account.account_balance = data[2]
+		registered_account.mining_points = data[3]
+		registered_account.bitrunning_points = data[4]
 
 		return
 
@@ -131,6 +131,20 @@
 		stored_research.hidden_nodes.Cut()
 
 		stored_research.hidden_nodes += resolved_value
+
+		return
+
+	..()
+
+/obj/item/holosign_creator/restore_saved_value(attribute, resolved_value)
+	if(attribute == "signs")
+		for(var/text_loc in resolved_value)
+			var/list/loc_list = splittext(text_loc, "$")
+			for(var/i in 1 to loc_list.len)
+				loc_list[i] = text2num(loc_list[i])
+			var/obj/structure/holosign/hologram = locate(holosign_type) in TURF_FROM_COORDS_LIST(loc_list)
+			hologram.projector = src
+			LAZYADD(signs, hologram)
 
 		return
 

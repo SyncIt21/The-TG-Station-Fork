@@ -1,3 +1,13 @@
+/obj/machinery/portable_atmospherics/restore_saved_value(attribute, resolved_value)
+	if(attribute == "anchored")
+		var/obj/machinery/atmospherics/components/unary/portables_connector/possible_port = locate(/obj/machinery/atmospherics/components/unary/portables_connector) in loc
+		if(!QDELETED(possible_port))
+			addtimer(CALLBACK(src, PROC_REF(connect), possible_port), 1 SECONDS)
+
+		return
+
+	..()
+
 /obj/machinery/atmospherics/restore_saved_value(attribute, resolved_value)
 	if(attribute == "on")
 		on = FALSE
